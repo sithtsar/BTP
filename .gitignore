@@ -1,13 +1,111 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
+# Build directories
 build/
-dist/
-wheels/
-*.egg-info
+bin/
+lib/
 
-# Virtual environments
-.venv
+# Compiled Object files
+*.o
+*.obj
+*.lo
+*.slo
 
-.claude 
-node_modules/*
+# Compiled Dynamic libraries
+*.so
+*.dll
+*.dylib
+
+# Compiled Static libraries
+*.a
+*.lib
+*.lai
+*.la
+
+# Executables
+*.exe
+*.out
+*.app
+lbm_sim
+single_phase_app
+multiphase_app
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Data and output files
+*.csv
+*.dat
+*.png
+*.pdf
+*.eps
+plots/
+*_output/
+*_test*/
+benchmark_results/
+integration_test*/
+h_theorem_verification*/
+multiphase_integration*/
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.cproject
+.settings/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+
+# Report generation
+reports/generated/
+reports/output/
+*.md.backup
+
+# Legacy files that should be ignored
+requirements.txt
+package.json
+package-lock.json
+node_modules/
+.python-version
+
+# Claude-specific
+.claude/
