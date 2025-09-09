@@ -63,11 +63,14 @@ cd build
 if g++ -std=c++17 -O3 -I../include -I../src ../src/multiphase_lbm.cpp -o bin/multiphase_sim > /dev/null 2>&1; then
     print_success "Multiphase simulation compiled"
     
-    if ./bin/multiphase_sim > /dev/null 2>&1; then
+    # Run from project root so data/ path works correctly
+    cd ..
+    if ./build/bin/multiphase_sim > /dev/null 2>&1; then
         print_success "Multiphase simulation completed"
     else
         print_warning "Multiphase simulation failed - continuing with single-phase analysis"
     fi
+    cd build
 else
     print_warning "Failed to compile multiphase simulation - continuing with single-phase analysis"
 fi

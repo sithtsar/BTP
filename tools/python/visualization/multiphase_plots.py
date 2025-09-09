@@ -93,14 +93,14 @@ class MultiphasePlots:
                 y_positions = np.sort(y_unique)
                 nx, ny = len(x_unique), len(y_unique)
             
-            # Reshape data into 2D fields
-            phi_fields[timestep] = df['phi'].values.reshape(nx, ny)
-            rho_fields[timestep] = df['rho'].values.reshape(nx, ny)
-            ux_fields[timestep] = df['ux'].values.reshape(nx, ny)
-            uy_fields[timestep] = df['uy'].values.reshape(nx, ny)
+            # Reshape data into 2D fields (note: data is stored as y varies slowest)
+            phi_fields[timestep] = df['phi'].values.reshape(ny, nx)
+            rho_fields[timestep] = df['rho'].values.reshape(ny, nx)
+            ux_fields[timestep] = df['ux'].values.reshape(ny, nx)
+            uy_fields[timestep] = df['uy'].values.reshape(ny, nx)
             
             if 'p' in df.columns:
-                pressure_fields[timestep] = df['p'].values.reshape(nx, ny)
+                pressure_fields[timestep] = df['p'].values.reshape(ny, nx)
         
         # Load averaged profile data if available
         averaged_profiles = {}
@@ -127,14 +127,25 @@ class MultiphasePlots:
                         threshold: float = 0.5) -> Tuple[np.ndarray, np.ndarray]:
         """Detect interface location from phase field."""
         # Find contour at phi = threshold
-        contours = plt.contour(phi_field, levels=[threshold])
-        plt.close()  # Close the temporary figure
+        fig, ax = plt.subplots()
+        contours = ax.contour(phi_field, levels=[threshold])
+        plt.close(fig)  # Close the temporary figure
         
-        if len(contours.collections) > 0 and len(contours.collections[0].get_paths()) > 0:
-            path = contours.collections[0].get_paths()[0]
-            vertices = path.vertices
-            return vertices[:, 0], vertices[:, 1]
-        else:
+        # Handle both old and new matplotlib versions
+        try:
+            if hasattr(contours, 'collections') and len(contours.collections) > 0:
+                paths = contours.collections[0].get_paths()
+            else:
+                # For newer matplotlib versions
+                paths = contours.get_paths() if hasattr(contours, 'get_paths') else []
+                
+            if len(paths) > 0:
+                vertices = paths[0].vertices
+                return vertices[:, 0], vertices[:, 1]
+            else:
+                return np.array([]), np.array([])
+        except:
+            # Fallback: return empty arrays if contour detection fails
             return np.array([]), np.array([])
     
     def calculate_interface_metrics(self, phi_field: np.ndarray, 
@@ -212,8 +223,8 @@ class MultiphasePlots:
         ux = data.ux_fields[timestep]
         uy = data.uy_fields[timestep]
         
-        # Create meshgrid for plotting
-        X, Y = np.meshgrid(data.x_positions, data.y_positions, indexing='ij')
+        # Create meshgrid for plotting (using 'xy' indexing to match data shape)
+        X, Y = np.meshgrid(data.x_positions, data.y_positions, indexing='xy')
         
         # Phase field plot
         im1 = axes[0].contourf(X, Y, phi, levels=20, cmap=self.phase_colormap)
@@ -257,8 +268,8 @@ class MultiphasePlots:
         uy = data.uy_fields[timestep]
         phi = data.phi_fields[timestep]
         
-        # Create meshgrid
-        X, Y = np.meshgrid(data.x_positions, data.y_positions, indexing='ij')
+        # Create meshgrid (using 'xy' indexing to match data shape)
+        X, Y = np.meshgrid(data.x_positions, data.y_positions, indexing='xy')
         
         # Plot phase field as background
         im = ax.contourf(X, Y, phi, levels=20, cmap=self.phase_colormap, alpha=0.6)
@@ -327,9 +338,14 @@ class MultiphasePlots:
         axes[1].set_ylabel("Interface Thickness")
         
         # Mass conservation
-        axes[2].semilogy(timesteps, mass_errors, '^-', color='green', linewidth=2, markersize=5)
+        # Handle log scale for mass errors (avoid warning when all values are zero/negative)
+        if np.any(np.array(mass_errors) > 0):
+            axes[2].semilogy(timesteps, mass_errors, '^-', color='green', linewidth=2, markersize=5)
+            axes[2].set_ylim(bottom=1e-12)
+        else:
+            # Use linear scale if no positive values
+            axes[2].plot(timesteps, mass_errors, '^-', color='green', linewidth=2, markersize=5)
         axes[2].set_ylabel("Mass Conservation Error")
-        axes[2].set_ylim(bottom=1e-12)
         
         return fig, axes
     

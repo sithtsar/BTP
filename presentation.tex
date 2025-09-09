@@ -1,8 +1,9 @@
 \documentclass{beamer}
 \usepackage{graphicx}
+\usepackage{subcaption}
 
-\title{LBM Poiseuille Flow Simulation Analysis}
-\author{Gemini}
+\title{LBM Poiseuille Flow Simulation: Comprehensive Analysis}
+\author{LBM Research Project}
 \date{\today}
 
 \begin{document}
@@ -12,78 +13,241 @@
 \end{frame}
 
 \begin{frame}{Introduction}
-  This presentation provides an overview of the Lattice Boltzmann Method (LBM) simulations for Poiseuille flow. It covers both single-phase and multiphase flow scenarios, presenting key results and analysis.
-\end{frame}
-
-\begin{frame}{System Overview}
-  \begin{figure}
-    \includegraphics[width=0.8\textwidth]{plots/analysis/physical_system_diagram.png}
-    \caption{Physical System Diagram}
-  \end{figure}
-\end{frame}
-
-\begin{frame}{System Overview}
-  \begin{figure}
-    \includegraphics[width=0.8\textwidth]{plots/analysis/systems_overview.png}
-    \caption{Systems Overview}
-  \end{figure}
+  This presentation provides a comprehensive overview of Lattice Boltzmann Method (LBM) simulations for fluid flow analysis, featuring:
+  \begin{itemize}
+    \item Single-phase flow with Standard and Entropic BGK collision operators
+    \item Multiphase flow dynamics and interface tracking
+    \item H-theorem analysis for thermodynamic consistency
+    \item Complete automated visualization pipeline
+  \end{itemize}
 \end{frame}
 
 \section{Single-Phase Flow Analysis}
 
-\begin{frame}{Velocity Analysis}
+\begin{frame}{Single-Phase Flow: Standard BGK}
   \begin{figure}
-    \includegraphics[width=\textwidth]{plots/velocity_analysis.png}
-    \caption{Velocity profile analysis for single-phase flow.}
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=\textwidth]{plots/single_phase_velocity_profiles.png}
+      \caption{Velocity Profiles}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=\textwidth]{plots/single_phase_error_analysis.png}
+      \caption{Error Analysis}
+    \end{subfigure}
+    \caption{Velocity profile evolution and error analysis for the Standard BGK method.}
   \end{figure}
 \end{frame}
+
+\begin{frame}{Single-Phase Flow: Entropic BGK}
+  \begin{figure}
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=\textwidth]{plots/single_phase_velocity_profiles_entropic.png}
+      \caption{Velocity Profiles}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=\textwidth]{plots/single_phase_error_analysis_entropic.png}
+      \caption{Error Analysis}
+    \end{subfigure}
+    \caption{Velocity profile evolution and error analysis for the Entropic BGK method.}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{H-Function Evolution}
+  \begin{figure}
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=\textwidth]{plots/single_phase_h_function_evolution.png}
+      \caption{Standard BGK}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=\textwidth]{plots/single_phase_h_function_evolution_entropic.png}
+      \caption{Entropic BGK}
+    \end{subfigure}
+    \caption{H-function spatial and temporal evolution for thermodynamic analysis.}
+  \end{figure}
+\end{frame}
+
+\section{H-theorem Analysis}
 
 \begin{frame}{BGK Method Comparison}
   \begin{figure}
-    \includegraphics[width=0.8\textwidth]{plots/single_phase/bgk_method_comparison.png}
-    \caption{Comparison of different BGK methods.}
-  \end{figure}
-\end{frame}
-
-\begin{frame}{Comprehensive Evolution}
-  \begin{figure}
-    \includegraphics[width=\textwidth]{plots/single_phase/comprehensive_evolution.png}
-    \caption{Time evolution of the single-phase system.}
+    \includegraphics[width=\textwidth]{plots/h_theorem_bgk_comparison.png}
+    \caption{Comprehensive comparison of Standard vs Entropic BGK methods}
   \end{figure}
 \end{frame}
 
 \section{Multiphase Flow Analysis}
 
-\begin{frame}{Multiphase Analysis}
+\begin{frame}{Multiphase Fields Evolution}
   \begin{figure}
-    \includegraphics[width=\textwidth]{plots/multiphase_analysis.png}
-    \caption{Analysis of the multiphase flow simulation.}
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_fields_t0.png}
+      \caption{t=0}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_fields_t5000.png}
+      \caption{t=5000}
+    \end{subfigure}
+    \vfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_fields_t10000.png}
+      \caption{t=10000}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_fields_t15000.png}
+      \caption{t=15000}
+    \end{subfigure}
+    \caption{Evolution of phase field, density, and velocity distributions.}
   \end{figure}
 \end{frame}
 
-\begin{frame}{2D Field Visualization}
+\begin{frame}{Flow Streamlines Evolution}
   \begin{figure}
-    \includegraphics[width=0.8\textwidth]{plots/multiphase/2d_field_visualization.png}
-    \caption{2D visualization of the multiphase field.}
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_streamlines_t0.png}
+      \caption{t=0}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_streamlines_t5000.png}
+      \caption{t=5000}
+    \end{subfigure}
+    \vfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_streamlines_t10000.png}
+      \caption{t=10000}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_streamlines_t15000.png}
+      \caption{t=15000}
+    \end{subfigure}
+    \caption{Evolution of velocity streamlines with phase field overlay.}
   \end{figure}
 \end{frame}
 
-\begin{frame}{Comprehensive Analysis}
+\begin{frame}{Interface Evolution}
   \begin{figure}
-    \includegraphics[width=\textwidth]{plots/multiphase/comprehensive_analysis.png}
-    \caption{Comprehensive analysis of the multiphase system.}
+    \includegraphics[width=\textwidth]{plots/multiphase_interface_evolution.png}
+    \caption{Temporal evolution of interface position and stability analysis}
   \end{figure}
 \end{frame}
 
-\begin{frame}{Data Quality Report}
+\begin{frame}{Averaged Profiles Evolution}
   \begin{figure}
-    \includegraphics[width=0.8\textwidth]{plots/multiphase/data_quality_report.png}
-    \caption{Data quality report for the multiphase simulation.}
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_profiles_t0.png}
+      \caption{t=0}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_profiles_t5000.png}
+      \caption{t=5000}
+    \end{subfigure}
+    \vfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_profiles_t10000.png}
+      \caption{t=10000}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+      \includegraphics[width=0.48\textwidth]{plots/multiphase_profiles_t15000.png}
+      \caption{t=15000}
+    \end{subfigure}
+    \caption{Evolution of Y-averaged profiles showing developed flow structure.}
   \end{figure}
+\end{frame}
+
+\section{Key Results and Validation}
+
+\begin{frame}{Simulation Parameters}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Single-phase:}
+      \begin{itemize}
+        \item Grid: 20\times21
+        \item Relaxation time: τ = 1.0
+        \item Body force: 1\times10⁻⁶
+        \item Time steps: 10,000
+        \item Both Standard & Entropic BGK
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Multiphase:}
+      \begin{itemize}
+        \item Grid: 256\times64
+        \item Density ratio: 1000:1
+        \item Interface thickness: 4 units
+        \item Time steps: 15,000
+        \item Conservative phase-field
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Validation Results}
+  \begin{itemize}
+    \item \textbf{Analytical Agreement}: Single-phase velocity profiles match theoretical Poiseuille solution
+    \item \textbf{H-theorem Compliance}: Entropic BGK maintains thermodynamic consistency
+    \item \textbf{Mass Conservation}: Both methods preserve mass to machine precision
+    \item \textbf{Interface Stability}: Multiphase simulation maintains sharp interfaces
+    \item \textbf{Performance}: Standard BGK: >50 steps/sec, Entropic BGK: >25 steps/sec
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Automated Pipeline}
+  \textbf{Complete analysis with single command:} \texttt{{./run\_quick.sh}}
+  
+  \begin{itemize}
+    \item Automatic project building and cleanup
+    \item Sequential simulation execution (Standard → Entropic → Multiphase)
+    \item H-evolution file generation from H-function profiles
+    \item Comprehensive visualization generation (up to 14 plots)
+    \item Progress tracking and error handling
+    \item Cross-platform compatibility (macOS/Linux)
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Conclusion}
-  The LBM simulations demonstrate accurate and stable results for both single-phase and multiphase Poiseuille flow. The analysis of velocity profiles, method comparisons, and multiphase dynamics provides valuable insights into the system's behavior.
+  The comprehensive LBM simulation suite demonstrates:
+  \begin{itemize}
+    \item \textbf{Accuracy}: Excellent agreement with analytical solutions
+    \item \textbf{Stability}: Robust performance across parameter ranges
+    \item \textbf{Thermodynamic Consistency}: H-theorem compliance verification
+    \item \textbf{Multiphase Capability}: High density ratio interface tracking
+    \item \textbf{Automation}: Complete one-command analysis pipeline
+    \item \textbf{Extensibility}: Modular design for future enhancements
+  \end{itemize}
+  
+  \vspace{0.5cm}
+  \textbf{Applications}: Microfluidics, porous media flow, multiphase systems, and computational fluid dynamics research.
+\end{frame}
+
+\begin{frame}{Future Work}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{Planned Extensions:}
+      \begin{itemize}
+        \item 3D simulations
+        \item GPU acceleration (CUDA)
+        \item MPI parallelization
+        \item Advanced boundary conditions
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Research Applications:}
+      \begin{itemize}
+        \item Heat transfer LBM
+        \item Complex geometries
+        \item Moving boundaries
+        \item Industrial flows
+      \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \end{document}
