@@ -1,0 +1,60 @@
+# Build artifacts
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+
+# Simulation output & results
+output/
+*.dat
+*.csv
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# System
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+.cache/
+.env
+.python-version
+test_cylinder_quick.sh
+src/test_cylinder_quick.cpp
+
+# Marimo notebook cache
+**/__marimo__/
+
+# Documentation cache
+CLAUDE_MARIMO.md
