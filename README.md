@@ -60,7 +60,7 @@ H = Σ f_i · ln(f_i / w_i)
 This project is organized as a clean simulation-based repository with clear separation of concerns:
 
 ```
-BTP_FINAL/
+BTP/
 ├── include/                      # Header-only C++ library
 │   ├── core/                     # Core LBM components
 │   │   ├── lattice.h            # D2Q9, D3Q19 lattice definitions
@@ -165,7 +165,7 @@ BTP_FINAL/
 
 - C++17 compatible compiler (GCC, Clang, or MSVC)
 - CMake ≥ 3.15
-- Python ≥ 3.8 (for visualization)
+- Python ≥ 3.13 (for visualization)
 - Marimo (`pip install marimo`)
 - Matplotlib, NumPy, SciPy
 
@@ -274,8 +274,8 @@ The notebook allows you to:
 - Taylor-Green vortex: Viscosity error < 1%
 
 ✅ **Benchmark Cases**:
-- Lid-driven cavity Re=100, 1000: Completed
-- Cylinder flow: Partially implemented
+- Cylinder flow: Re -> [10,100,1000] all implemened
+- Colour Gradient Static Droplet Test : Stable
 
 ### Active Matter Validation
 
@@ -346,11 +346,3 @@ Two forms implemented:
 - [ ] Active Brownian particles
 - [ ] Vicsek-style alignment models
 - [ ] Active nematic 3D simulations
-
-## License
-
-MIT License - see LICENSE file for details
-
-## Contact
-
-For questions or issues, please open a GitHub issue or contact the repository maintainer.
