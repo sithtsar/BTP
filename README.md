@@ -159,6 +159,156 @@ BTP/
 - **Data**: All outputs automatically ignored via `.gitignore`; only source code committed
 - **Results**: Figures and notebooks tracked for reproducibility reference
 
+## Architecture & Data Flow
+
+### System Architecture
+
+```mermaid
+graph TB
+    subgraph Core[Core Components]
+        Lattice[Lattice: D2Q9, D3Q19]
+        FluidState[FluidState: Distribution Functions]
+        Equilibrium[Equilibrium: BGK, Entropic]
+    end
+
+    subgraph Solvers[Collision Solvers]
+        BGK[BGK Solver: Standard LBM]
+        ELBM[ELBM Solver: H-Theorem]
+        Alpha[Alpha Solver: Newton-Raphson]
+    end
+
+    subgraph BoundaryOps[Boundary Operations]
+        BC[Boundary Conditions: Zou-He, Bounce-back]
+        Forces[Body Forces: Acceleration]
+    end
+
+    subgraph Extensions[Extensions]
+        Multiphase[Multiphase: Color Gradient]
+        ActiveMatter[Active Matter: Swarm, Nematic]
+    end
+
+    Lattice --> FluidState
+    FluidState --> BGK
+    FluidState --> ELBM
+    Equilibrium --> BGK
+    Equilibrium --> ELBM
+    ELBM --> Alpha
+    BGK --> BC
+    ELBM --> BC
+    Forces --> BGK
+    Forces --> ELBM
+    BC --> Multiphase
+    BC --> ActiveMatter
+```
+
+### Simulation Pipeline
+
+```mermaid
+graph LR
+    A[Initialize: Grid & State] --> B[Collision: BGK/ELBM]
+    B --> C[Streaming: Propagation]
+    C --> D[Apply BCs: Boundaries]
+    D --> E[Update Forces: Body Force]
+    E --> F{Convergence?}
+    F -->|No| B
+    F -->|Yes| G[Output Results: Data Files]
+    G --> H[Visualization: Plotting]
+```
+
+### Module Dependencies
+
+```mermaid
+graph TB
+    subgraph Input[Input Layer]
+        TestCases[Test Cases: Analytical, Benchmark]
+    end
+
+    subgraph Processing[Processing Layer]
+        Core[Core LBM: Lattice, Fluid State]
+        Solvers[Solvers: BGK, ELBM]
+        Boundary[Boundary Conditions: Zou-He, Bounce-back]
+    end
+
+    subgraph Extensions[Extension Layer]
+        Multiphase[Multiphase: Color Gradient]
+        Active[Active Matter: Particles, Nematic]
+    end
+
+    subgraph Output[Output Layer]
+        DataFiles[Data Files: .dat, .csv]
+        Plotting[Plotting Scripts: matplotlib, Python]
+        Notebooks[Interactive Notebooks: Marimo]
+    end
+
+    TestCases --> Core
+    Core --> Solvers
+    Solvers --> Boundary
+    Boundary --> Multiphase
+    Boundary --> Active
+    Multiphase --> DataFiles
+    Active --> DataFiles
+    DataFiles --> Plotting
+    DataFiles --> Notebooks
+```
+
+### Test Case Execution Flow
+
+```mermaid
+graph TD
+    Build["build.sh"] --> Analytical["test_analytical: Couette, Poiseuille, Taylor-Green"]
+    Build --> Benchmark["test_benchmark: Cylinder, Channel"]
+    Build --> Multiphase["test_colorgradient: Droplet Evolution"]
+    Build --> Active["test_active_swarm: Particle Dynamics"]
+    Build --> Nematic["test_active_nematic: Q-tensor Model"]
+
+    Analytical --> OutputA["output/analytical_validation/"]
+    Benchmark --> OutputB["output/case*_re*_bgk/"]
+    Benchmark --> OutputC["output/case*_re*_elbm/"]
+    Multiphase --> OutputD["output/"]
+    Active --> OutputE["output/"]
+    Nematic --> OutputF["output/"]
+
+    OutputA --> PlotA["plot_analytical_3way.py"]
+    OutputB --> PlotB["plot_benchmark_suite.py"]
+    OutputC --> PlotB
+    OutputD --> PlotD["plot_colorgradient_elbm.py"]
+    OutputE --> PlotE["plot_active_swarm.py"]
+    OutputF --> PlotF["plot_active_nematic.py"]
+```
+
+### Solver Comparison
+
+```mermaid
+graph LR
+    BGK["BGK: f_new = f - ω(f - f_eq)"] -->|Fast| Speed1["1.0x Speed"]
+    BGK -->|Limited| Stability1["Breaks at high Re"]
+
+    ELBM["ELBM: Two-step collision with H-theorem"] -->|Slow| Speed2["0.09x Speed - 11x slower"]
+    ELBM -->|Stable| Stability2["Unconditional Stability"]
+
+    Speed1 --> Compare["Trade-off: Speed vs Stability"]
+    Speed2 --> Compare
+    Stability1 --> Compare
+    Stability2 --> Compare
+```
+
+### Reynolds Number Sweep
+
+```mermaid
+graph LR
+    Re10["Re = 10: ν = 0.1"] --> BGK10["BGK: Stable"]
+    Re10 --> ELBM10["ELBM: Stable"]
+
+    Re100["Re = 100: ν = 0.01"] --> BGK100["BGK: Diffusive"]
+    Re100 --> ELBM100["ELBM: Accurate"]
+
+    Re1000["Re = 1000: ν = 0.001"] --> BGK1000["BGK: Unstable"]
+    Re1000 --> ELBM1000["ELBM: Stable"]
+
+    BGK10 --> Validation["ELBM superior stability at high Re"]
+    ELBM1000 --> Validation
+```
+
 ## Build Instructions
 
 ### Prerequisites
@@ -245,19 +395,108 @@ The notebook allows you to:
 - View statistics and stability metrics
 - Generate publication-quality figures
 
-## Test Cases
+## Test Cases & Validation Suite
 
-### Case 1: Re ~ 10 (ν = 0.1 m²/s)
-- **Expected**: Both BGK and ELBM stable
-- **Observation**: Similar behavior, minor BC differences
+### 1. Analytical Validation (3 Cases)
 
-### Case 2: Re ~ 100 (ν = 0.01 m²/s)
-- **Expected**: BGK shows numerical diffusion, ELBM stable
-- **Observation**: Clear divergence in behavior
+Validate correctness of BGK and ELBM solvers against known analytical solutions.
 
-### Case 3: Re ~ 1000 (ν = 0.001 m²/s)
-- **Expected**: BGK complete breakdown, ELBM stable
-- **Observation**: Demonstrates unconditional stability of ELBM
+| Test | Command | Output |
+|------|---------|--------|
+| Couette Flow | `./build/test_analytical couette` | Velocity profiles, L2 errors |
+| Poiseuille Flow | `./build/test_analytical poiseuille` | Pressure-driven profiles |
+| Taylor-Green Vortex | `./build/test_analytical taylor_green` | Viscosity validation |
+| All Tests | `./build/test_analytical all` | Complete analytical suite |
+
+Output stored in `output/analytical_validation/` with plots generated via `plotting/plot_analytical_3way.py`.
+
+---
+
+### 2. Cylindrical Flow (Re: 10, 100, 1000)
+
+Flow around a cylinder in a channel across different Reynolds numbers.
+
+**Run Cases:**
+```bash
+./build/test_benchmark cylinder 10 0      # Re=10 BGK
+./build/test_benchmark cylinder 10 1      # Re=10 ELBM
+./build/test_benchmark cylinder 100 0     # Re=100 BGK
+./build/test_benchmark cylinder 100 1     # Re=100 ELBM
+./build/test_benchmark cylinder 1000 0    # Re=1000 BGK
+./build/test_benchmark cylinder 1000 1    # Re=1000 ELBM
+```
+
+Outputs are stored in `output/case*_re*_bgk/` and `output/case*_re*_elbm/` directories.
+
+**Plotting:**
+```bash
+python plotting/plot_cylinder_spatial_analysis.py
+python plotting/plot_benchmark_suite.py
+```
+
+---
+
+### 3. Square Channel Flow (Re: 10, 100, 1000)
+
+Primary validation case using rectangular channel geometry at three Reynolds numbers.
+
+**Run All:**
+```bash
+./scripts/run_all_cases.sh
+```
+
+**Interactive Visualization:**
+```bash
+cd notebooks
+marimo edit 01_pressure_profiles.py
+```
+
+**Plotting:**
+```bash
+python scripts/analysis/generate_all_figures.py
+```
+
+---
+
+### 4. Color Gradient / Multiphase Flow
+
+Two-phase flow using color gradient method for interfacial tension.
+
+**Run:**
+```bash
+./build/test_colorgradient
+```
+
+Outputs in `output/` directory with interface tracking.
+
+**Plotting:**
+```bash
+python plotting/plot_colorgradient_elbm.py
+python plotting/plot_droplet_evolution.py
+```
+
+---
+
+### 5. Active Matter Implementation
+
+Particle-based and continuum active matter models.
+
+**Active Swarm (Run-and-tumble particles):**
+```bash
+./build/test_active_swarm
+```
+
+**Active Nematic (Q-tensor model):**
+```bash
+./build/test_active_nematic
+```
+
+**Plotting:**
+```bash
+python plotting/plot_active_swarm.py
+python plotting/plot_active_nematic.py
+python plotting/animate_active_nematic.py
+```
 
 ## Validation Results
 
