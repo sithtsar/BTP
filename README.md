@@ -25,7 +25,7 @@ This project implements and validates the Entropic LBM approach from Et.al S.A. 
 
 - **Validation**:
   - Rectangular pipe flow at Re ~ 10, 100, 1000
-  - Reproduces all 19 figures from Yu thesis comparing BGK vs ELBM stability
+  - Reproduces all figures from thesis comparing BGK vs ELBM stability
   - Active matter: Bacterial swarm simulations with fluid perturbations
 
 ## Mathematical Foundation
@@ -115,7 +115,7 @@ BTP_FINAL/
 │   └── 03_benchmark_cases.py    # Benchmark visualizations
 │
 ├── docs/                         # Documentation
-│   ├── papers/                  # Reference papers (Yu thesis, etc.)
+│   ├── papers/                  # Reference papers  (thesis, etc.)
 │   ├── ocr_output/              # Extracted thesis content
 │   ├── active_matter/           # Active matter documentation
 │   └── report/                  # Technical reports
@@ -263,7 +263,7 @@ The notebook allows you to:
 
 ### ELBM Primary Validation
 
-✅ **Thesis Replication**: All 19 figures from Yu thesis successfully reproduced
+✅ **Thesis Replication**: All figures from thesis successfully reproduced
 - Case 1 (Re~10): Both BGK and ELBM stable
 - Case 2 (Re~100): BGK shows diffusion, ELBM stable
 - Case 3 (Re~1000): BGK fails, ELBM demonstrates unconditional stability
@@ -323,6 +323,7 @@ Two forms implemented:
 
 ## References
 
+0. S.A. Hosseini, Entropic lattice Boltzmann methods: A review,  Computers & Fluids, Volume 259, 15 June 2023, 105884
 1. Keming Yu, "Entropic Lattice Boltzmann Method", UNC Chapel Hill Honor Thesis, 2021
 2. S. Ansumali and I.V. Karlin, "Stabilization of the lattice Boltzmann method by the H theorem", Physical Review E, 2000
 3. I.V. Karlin et al., "Perfect entropy functions of the Lattice Boltzmann method", Europhysics Letters, 1999
