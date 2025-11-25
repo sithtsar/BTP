@@ -346,12 +346,6 @@ Two forms implemented:
 - [ ] Vicsek-style alignment models
 - [ ] Active nematic 3D simulations
 
-### Advanced Physics
-- [ ] Thermal active matter
-- [ ] Active colloidal suspensions
-- [ ] Bacterial turbulence
-- [ ] Active matter in complex geometries
-
 ## License
 
 MIT License - see LICENSE file for details
