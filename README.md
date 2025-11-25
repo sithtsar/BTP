@@ -2,7 +2,7 @@
 
 A high-performance C++ implementation of the Entropic Lattice Boltzmann Method for fluid dynamics simulations, featuring active matter modeling and comprehensive validation suite.
 
-This project implements and validates the Entropic LBM approach from Keming Yu's honor thesis, demonstrating unconditional stability compared to standard BGK methods, plus extensions to active matter systems.
+This project implements and validates the Entropic LBM approach from Et.al S.A. Hosseini 2023 , demonstrating unconditional stability compared to standard BGK methods, plus extensions to active matter systems.
 
 ## Features
 
