@@ -224,7 +224,7 @@ Run comprehensive analytical validation:
 
 ### Benchmark Cases
 
-Run lid-driven cavity and cylinder flow benchmarks:
+Cylinder flow benchmarks:
 
 ```bash
 ./build/test_benchmark
