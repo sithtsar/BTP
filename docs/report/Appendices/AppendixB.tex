@@ -1,0 +1,112 @@
+\chapter{Implementation Details}
+
+\section{Alpha-Solver Algorithm}
+
+\begin{algorithm}[H]
+\caption{Newton-Raphson $\alpha$-Solver}
+\begin{algorithmic}[1]
+\Require $f_i, f_i^{\mathrm{eq}}$, tolerance $\epsilon = 10^{-10}$
+\State $\Delta f_i \gets f_i^{\mathrm{eq}} - f_i$
+\State $H_0 \gets \sum_i f_i \ln(f_i/w_i)$
+\State
+\State \Comment{Compute bounds}
+\State $\alpha_{\max} \gets \min_{\{\Delta f_i < 0\}} f_i/|\Delta f_i|$
+\State $\alpha \gets \alpha_{\max}/2$ \Comment{Initial guess}
+\State
+\For{$n = 1$ to 30}
+    \State $f_i^* \gets f_i + \alpha\Delta f_i$
+    \State $H_\alpha \gets \sum_i f_i^* \ln(f_i^*/w_i)$
+    \If{$|H_\alpha - H_0| < \epsilon$}
+        \State \Return $\alpha$
+    \EndIf
+    \State $H' \gets \sum_i \Delta f_i [\ln(f_i^*/f_i) + 1]$
+    \State $\alpha \gets \alpha - (H_\alpha - H_0)/H'$
+    \State $\alpha \gets \max(0, \min(\alpha_{\max}, \alpha))$ \Comment{Enforce bounds}
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+Typically converges in 5-10 iterations. Optimization: use previous timestep's $\alpha$ as initial guess (reduces to 2-3 iterations).
+
+\section{Zou-He Boundary Conditions}
+
+For left velocity inlet with $\mathbf{u} = (u_x, u_y)$:
+
+\textbf{Step 1}: Compute density from known distributions:
+\begin{equation}
+\rho = \frac{f_0 + f_2 + f_4 + 2(f_3 + f_6 + f_7)}{1 - u_x}
+\end{equation}
+
+\textbf{Step 2}: Set unknown distributions ($f_1, f_5, f_8$):
+\begin{align}
+f_1 &= f_3 + \frac{2}{3}\rho u_x \\
+f_5 &= f_7 - \frac{1}{2}(f_2 - f_4) + \frac{1}{2}\rho u_y + \frac{1}{6}\rho u_x \\
+f_8 &= f_6 + \frac{1}{2}(f_2 - f_4) - \frac{1}{2}\rho u_y + \frac{1}{6}\rho u_x
+\end{align}
+
+\textbf{Derivation}: From mass and momentum conservation:
+\begin{align}
+\rho &= \sum_i f_i \\
+\rho u_x &= f_1 + f_5 + f_8 - f_3 - f_6 - f_7 \\
+\rho u_y &= f_2 + f_5 + f_6 - f_4 - f_7 - f_8
+\end{align}
+
+Solving this system yields the Zou-He formulas. Apply similar derivation to other boundaries.
+
+\section{Operation Sequence}
+
+\textbf{Critical}: Correct order prevents boundary corruption:
+
+\begin{enumerate}
+    \item \textbf{Collision}: Compute $f^{\mathrm{post}}$ at all fluid nodes
+    \item \textbf{Streaming}: Propagate to neighbors (check bounds, skip solid nodes)
+    \item \textbf{Boundaries}: Apply Zou-He/bounce-back
+    \item \textbf{Macroscopic}: Recompute $\rho, \mathbf{u}, p$ from corrected $f$
+\end{enumerate}
+
+If boundaries applied before streaming, streaming overwrites boundary values → simulation fails.
+
+\section{Performance Profiling}
+
+\begin{table}[H]
+\centering
+\caption{Computational Bottlenecks}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Function} & \textbf{BGK (\%)} & \textbf{ELBM (\%)} \\
+\midrule
+Streaming & 45.2 & 15.2 \\
+Collision & 32.1 & 9.1 \\
+Alpha-solver & 0 & 68.3 \\
+Boundaries & 12.5 & 4.2 \\
+Macroscopic & 8.7 & 2.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+$\alpha$-solver dominates ELBM (68\%). Optimizations: warm start (50\% reduction), SIMD (2-4$\times$), GPU (50-100$\times$).
+
+\section{Common Implementation Errors}
+
+\begin{enumerate}
+    \item \textbf{Periodic streaming on non-periodic domains}: Use bounds checking, not modulo
+    \item \textbf{Wrong equilibrium in ELBM}: Must use entropic equilibrium, not BGK
+    \item \textbf{BC before streaming}: Always apply boundaries \emph{after} streaming
+    \item \textbf{Missing $-1/2$ in viscosity}: $\nu = c_s^2(\tau - \Delta t/2)$, not $c_s^2\tau$
+    \item \textbf{Dynamic vs kinematic viscosity}: Poiseuille uses $\mu = \rho\nu$
+\end{enumerate}
+
+\section{Verification Checklist}
+
+Before trusting results:
+\begin{itemize}
+    \item Lattice vectors and weights correct
+    \item Equilibrium formula signs/coefficients verified
+    \item Collision direction: $f - \omega(f - f^{\mathrm{eq}})$
+    \item Streaming direction: forward propagation
+    \item BC timing: after streaming
+    \item Opposite direction mapping for bounce-back
+    \item Units consistent ($\Delta x = \Delta t = 1$)
+\end{itemize}
+
+\textbf{Test}: Validate on Couette/Poiseuille before complex cases. If analytical tests fail, implementation has bugs.

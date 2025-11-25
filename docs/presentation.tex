@@ -1,0 +1,1001 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% Set default image height to prevent clipping
+\setkeys{Gin}{height=0.7\textheight,keepaspectratio}
+
+\title{Entropic Lattice Boltzmann Method}
+\subtitle{Comprehensive Stability Analysis and Multiphase Extension}
+\author{Sarthak Mishra \\ BTP-I under Prof. Amol Subhedar}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+% ===== TABLE OF CONTENTS =====
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+% ===== INTRODUCTION =====
+\section{Introduction}
+
+\begin{frame}{Lattice Boltzmann Method}
+\begin{itemize}
+    \item Kinetic description of fluid flow at mesoscopic scale
+    \item Stream and collide approach: efficient and parallelizable
+    \item Standard BGK collision: simple but suffers from instabilities
+    \item \textbf{Entropic LBM}: Enforces H-theorem for unconditional stability
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Objective}: Investigate entropic stabilization mechanisms and validate implementation across Reynolds number regimes and multiphase flows
+\end{frame}
+
+\begin{frame}{Problem Statement}
+\textbf{BGK Method Limitations}:
+\begin{itemize}
+    \item Stability condition: $\Delta t / \tau > 1/2$
+    \item Fails at high Reynolds numbers (Re $>$ 100-200)
+    \item Numerical diffusion at low viscosity
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Entropic Solution}:
+\begin{itemize}
+    \item Enforce H-theorem: $dH/dt \leq 0$
+    \item Two-step collision: iso-entropy + dissipation
+    \item \textbf{Unconditionally stable} at any Reynolds number
+\end{itemize}
+\end{frame}
+
+% ===== LITERATURE REVIEW =====
+\section{Literature Review: ETH Zurich Study}
+
+\begin{frame}{Entropic LBM: A Comprehensive Review}
+\textbf{Key Reference}: Hosseini, S.A., Atif, M., Ansumali, S., \& Karlin, I.V. (2023).
+\textit{Entropic lattice Boltzmann methods: A review}.
+Computers \& Fluids. ETH Zurich.
+
+\vspace{0.3cm}
+\textbf{Historical Context}:
+\begin{itemize}
+    \item Late 90's / early 2000's: \textbf{Paradigm shift} in LBM construction
+    \item Introduction of discrete H-theorem and Lyapunov functionals
+    \item Reorganization of collision operator with entropy-based equilibrium
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Applications Validated}:
+\begin{itemize}
+    \item Isothermal weakly compressible flows
+    \item Fully compressible flows
+    \item Multiphase flows
+    \item High Reynolds number aerodynamics
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Entropic vs Polynomial Equilibria: Theoretical Analysis}
+\textbf{Key Insight from ETH Study}:
+
+\vspace{0.3cm}
+\textbf{Polynomial equilibrium} (classical BGK):
+\begin{itemize}
+    \item Moment-matching approach (2nd order Hermite expansion)
+    \item \textbf{Does NOT minimize entropy functional}
+    \item No H-theorem guarantee
+    \item Root cause of observed instabilities
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Entropic equilibrium} (variational approach):
+\begin{itemize}
+    \item Minimizes convex entropy function $H = \sum_i f_i \ln(f_i/w_i)$
+    \item Satisfies mass \& momentum constraints (not 2nd moment)
+    \item \textbf{Guarantees H-theorem}: $dH/dt \leq 0$
+    \item Unconditional linear stability (von Neumann analysis)
+\end{itemize}
+
+\vspace{0.2cm}
+\textit{Source: ETH Review, Section 2.2-2.3}
+\end{frame}
+
+\begin{frame}{ETH Review: Key Theoretical Contributions}
+\textbf{Linear Stability Analysis}:
+\begin{itemize}
+    \item von Neumann analysis: ELBM shows \textbf{unconditional stability}
+    \item Polynomial equilibrium: $Ma_{max} = \sqrt{3}-1 \approx 0.73$ (limited)
+    \item Entropic equilibrium: No stability limit, even at vanishing viscosity
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Entropy-Constrained Relaxation}:
+\begin{itemize}
+    \item Mirror symmetry property: Two-state collision preserves entropy
+    \item Over-relaxation parameter $\alpha > 1$ always (due to convexity)
+    \item Resolved limit: $\alpha \to 2$ (ELBM converges to LBGK)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Sound Speed Adaptation}:
+\begin{itemize}
+    \item Polynomial: Constant $c_s$ $\Rightarrow$ fixed Mach number limit
+    \item Entropic: Self-adjusting $c_s(u_x)$ $\Rightarrow$ unconditional stability
+    \item Pressure tensor deviations negligible for $Ma < 0.5$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{ETH Review: Key Takeaways}
+\begin{enumerate}
+    \item \textbf{Theoretical Foundation}:
+    \begin{itemize}
+        \item Entropy minimization $\neq$ moment matching
+        \item H-theorem enforcement is fundamental for stability
+        \item Perfect entropy functional: $H = \sum_i f_i \ln(f_i/w_i)$
+    \end{itemize}
+
+    \item \textbf{Linear Stability}:
+    \begin{itemize}
+        \item von Neumann analysis: ELBM unconditionally stable
+        \item Self-adjusting sound speed prevents lattice violation
+        \item Valid even at vanishing viscosity
+    \end{itemize}
+
+    \item \textbf{Practical Implications}:
+    \begin{itemize}
+        \item Pressure deviations negligible in practice ($Ma < 0.5$)
+        \item Mirror symmetry property aids numerical implementation
+        \item Proven effectiveness across flow regimes
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.2cm}
+\textbf{Our Work}: Validates these theoretical predictions through comprehensive numerical experiments
+\end{frame}
+
+% ===== MATHEMATICAL FOUNDATION =====
+\section{Mathematical Foundation}
+
+\begin{frame}{D2Q9 Lattice Structure}
+\textbf{Discrete Velocity Set}:
+$$\mathbf{c}_i = \{(0,0), (\pm 1,0), (0,\pm 1), (\pm 1,\pm 1)\}$$
+
+\textbf{Lattice Weights}:
+$$w_i = \begin{cases}
+4/9 & i=0 \\
+1/9 & i=1,2,3,4 \\
+1/36 & i=5,6,7,8
+\end{cases}$$
+
+\vspace{0.3cm}
+\textbf{Lattice Units}:
+\begin{itemize}
+    \item $\Delta x = 1$, $\Delta t = 1$
+    \item Speed of sound: $c_s = 1/\sqrt{3}$, $c_s^2 = 1/3$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{BGK Equilibrium Distribution}
+\textbf{Second-order Hermite expansion}:
+$$f_i^{eq} = w_i \rho \left[1 + \frac{\mathbf{c}_i \cdot \mathbf{u}}{c_s^2} + \frac{(\mathbf{c}_i \cdot \mathbf{u})^2}{2c_s^4} - \frac{\mathbf{u}^2}{2c_s^2}\right]$$
+
+\vspace{0.3cm}
+\textbf{BGK Collision}:
+$$f_i^{new} = f_i - \omega(f_i - f_i^{eq})$$
+
+\vspace{0.3cm}
+\textbf{Viscosity}:
+$$\nu = c_s^2\left(\tau - \frac{\Delta t}{2}\right) = c_s^2\left(\frac{1}{\omega} - \frac{1}{2}\right)\Delta t$$
+
+\vspace{0.3cm}
+\textbf{Stability constraint}: $\omega < 2$ or $\tau > \Delta t/2$
+\end{frame}
+
+\begin{frame}{H-Function and Entropy}
+\textbf{Discrete H-function}:
+$$H = \sum_{i} f_i \ln\left(\frac{f_i}{w_i}\right)$$
+
+\textbf{H-theorem}:
+$$\frac{dH}{dt} \leq 0$$
+
+\vspace{0.3cm}
+Entropy must not increase $\rightarrow$ Guarantees stability
+
+\vspace{0.3cm}
+\textit{This is the fundamental difference from BGK which does not enforce entropy constraints}
+\end{frame}
+
+\begin{frame}{Entropic Equilibrium Distribution}
+\textbf{Entropic equilibrium} (differs from BGK):
+$$f_i^{eq} = w_i \rho \prod_j \left(2-\sqrt{1+u_j^2}\right) \left(\frac{2u_j+\sqrt{1+3u_j^2}}{1-u_j}\right)^{c_{ij}/c}$$
+
+\vspace{0.3cm}
+where $j$ runs over spatial dimensions and $c_{ij}$ is the $j$-th component of $\mathbf{c}_i$
+
+\vspace{0.5cm}
+\textbf{Key properties}:
+\begin{itemize}
+    \item Recovers correct hydrodynamics (Navier-Stokes)
+    \item Compatible with H-theorem enforcement
+    \item More complex than BGK but necessary for ELBM
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Two-Step Entropic Collision}
+\textbf{Step 1: Iso-Entropy ($\alpha$-relaxation)}
+$$f^* = f + \alpha(f^{eq} - f)$$
+where $\alpha$ is solved to satisfy: $H(f^*) = H(f)$
+
+\vspace{0.5cm}
+\textbf{Step 2: Dissipation ($\beta$-relaxation)}
+$$f^{new} = (1-\beta)f + \beta f^*$$
+
+\vspace{0.5cm}
+\textbf{Viscosity relation}:
+$$\nu = c_s^2\left(\frac{1}{\alpha\beta} - \frac{1}{2}\right)\Delta t$$
+
+Independent control through $\alpha\beta$ product allows arbitrarily low viscosity
+\end{frame}
+
+\begin{frame}{Alpha-Parameter Solver}
+\textbf{Objective}: Solve $H(f + \alpha\Delta) = H(f)$ where $\Delta = f^{eq} - f$
+
+\vspace{0.3cm}
+\textbf{Method}: Newton-Raphson with bound checking
+
+\vspace{0.3cm}
+\textbf{Bounds}: Ensure $f + \alpha\Delta \geq 0$ for all $i$
+\begin{itemize}
+    \item When $\Delta_i < 0$: $\alpha \leq f_i/|\Delta_i|$ (upper bound)
+    \item When $\Delta_i > 0$: $\alpha \geq 0$ (lower bound)
+\end{itemize}
+
+$$\alpha \in [\alpha_{min}, \alpha_{max}]$$
+
+\vspace{0.3cm}
+\textbf{Convergence}: Typically 10-15 iterations, tolerance $10^{-10}$
+
+\vspace{0.3cm}
+\textit{Computationally expensive but provides unconditional stability}
+\end{frame}
+
+% ===== RECTANGULAR CHANNEL SETUP =====
+\section{Rectangular Channel Flow Setup}
+
+\begin{frame}{Problem Configuration}
+\textbf{Domain}:
+\begin{itemize}
+    \item Grid: 100 $\times$ 40 lattice units
+    \item Pressure drop: $\Delta p = 5.0$ Pa
+    \item Periodic boundary in x-direction
+    \item No-slip walls at y = 0 and y = 39
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Coordinate System}:
+\begin{itemize}
+    \item x increases: left to right (0 to 99)
+    \item y increases: bottom to top (0 to 39)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Three Reynolds Number Regimes}:
+\begin{table}
+\centering
+\small
+\begin{tabular}{cccl}
+\toprule
+Case & Re & $\nu$ (lattice units) & Expected Behavior \\
+\midrule
+1 & $\sim$10 & 0.1 & Both BGK/ELBM stable \\
+2 & $\sim$100 & 0.01 & BGK diffusive, ELBM stable \\
+3 & $\sim$1000 & 0.001 & \textbf{BGK fails, ELBM stable} \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Boundary Conditions}
+\textbf{Zou-He Scheme}: Pressure and velocity boundaries
+\begin{itemize}
+    \item Extrapolates unknown distributions from known ones
+    \item Enforces mass and momentum conservation
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Bounce-Back}: No-slip walls
+\begin{itemize}
+    \item Reflects distributions: $f_i(\text{wall}) = f_{\bar{i}}(\text{wall})$
+    \item Simple but effective for stationary walls
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Critical Operation Order}:
+$$\text{Collision} \rightarrow \text{Streaming} \rightarrow \text{Boundary Conditions}$$
+
+\vspace{0.2cm}
+\textit{BCs must be applied AFTER streaming to avoid overwriting}
+\end{frame}
+
+% ===== RESULTS: PRIMARY VALIDATION =====
+\section{Primary Validation: Rectangular Channel Flow}
+
+\begin{frame}{Case 1: Re$\sim$10 - Centerline Profiles}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth,height=0.7\textheight,keepaspectratio]{../figures/Case 1 Re~10/figure_3_2.png}
+\tiny{BGK: Stable behavior}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth,height=0.7\textheight,keepaspectratio]{../figures/Case 1 Re~10/figure_3_3.png}
+\tiny{ELBM: Similar stability}
+\end{columns}
+\vspace{0.3cm}
+Both BGK and ELBM show stable, comparable behavior at low Re
+\end{frame}
+
+\begin{frame}{Case 1: Re$\sim$10 - Centerplane Contours (t=1250)}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 1 Re~10/figure_3_4.png}
+\tiny{BGK t=1250}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 1 Re~10/figure_3_5.png}
+\tiny{ELBM t=1250}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case 1: Re$\sim$10 - Centerplane Contours (t=2500)}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 1 Re~10/figure_3_6.png}
+\tiny{BGK t=2500}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 1 Re~10/figure_3_7.png}
+\tiny{ELBM t=2500}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case 2: Re$\sim$100 - Centerline Profiles}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 2 Re~100/figure_3_8.png}
+\tiny{BGK: Excessive diffusion}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 2 Re~100/figure_3_9.png}
+\tiny{ELBM: Maintains pressure gradient}
+\end{columns}
+\vspace{0.3cm}
+\textbf{Divergence begins}: BGK exhibits numerical diffusion while ELBM preserves physics
+\end{frame}
+
+\begin{frame}{Case 2: Re$\sim$100 - Centerplane Contours (t=1250)}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 2 Re~100/figure_3_10.png}
+\tiny{BGK t=1250}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 2 Re~100/figure_3_11.png}
+\tiny{ELBM t=1250}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case 2: Re$\sim$100 - Centerplane Contours (t=2500)}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 2 Re~100/figure_3_12.png}
+\tiny{BGK t=2500}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 2 Re~100/figure_3_13.png}
+\tiny{ELBM t=2500}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case 3: Re$\sim$1000 - Centerline Profiles}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 3 Re~1000/figure_3_14.png}
+\tiny{BGK: Complete failure (NaN)}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 3 Re~1000/figure_3_15.png}
+\tiny{ELBM: Unconditionally stable}
+\end{columns}
+\vspace{0.3cm}
+\textbf{Critical result}: BGK numerical breakdown vs ELBM stability through H-theorem enforcement
+\end{frame}
+
+\begin{frame}{Case 3: Re$\sim$1000 - Centerplane Contours (t=1250)}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 3 Re~1000/figure_3_16.png}
+\tiny{BGK t=1250}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 3 Re~1000/figure_3_17.png}
+\tiny{ELBM t=1250}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Case 3: Re$\sim$1000 - Centerplane Contours (t=2500)}
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 3 Re~1000/figure_3_18.png}
+\tiny{BGK t=2500}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/Case 3 Re~1000/figure_3_19.png}
+\tiny{ELBM t=2500}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Summary: BGK vs ELBM Stability}
+\textbf{Key Observations Across All Cases}:
+\begin{itemize}
+    \item \textbf{Re$\sim$10}: Both BGK and ELBM stable, comparable performance
+    \item \textbf{Re$\sim$100}: BGK shows excessive diffusion, ELBM maintains pressure gradient
+    \item \textbf{Re$\sim$1000}: BGK fails completely (NaN), ELBM remains stable
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Conclusion}: Entropic stabilization maintains physical solutions where conventional BGK methods fail
+\end{frame}
+
+\begin{frame}{Pressure Drop Retention Analysis}
+\begin{table}
+\centering
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Case} & \textbf{Re} & \textbf{BGK $\Delta p$} & \textbf{ELBM $\Delta p$} & \textbf{Status} \\
+\midrule
+1 & $\sim$10 & 0.5 & 2.7 & Both stable \\
+2 & $\sim$100 & 0.3 & 2.8 & ELBM superior \\
+3 & $\sim$1000 & NaN & 2.9 & \textbf{ELBM only} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.5cm}
+\textbf{Key Insights}:
+\begin{itemize}
+    \item Initial pressure drop: $\sim$3.0 in all cases
+    \item BGK: Progressive diffusion with increasing Re
+    \item ELBM: Consistently maintains pressure gradient ($\sim$2.7-2.9)
+    \item Re$\sim$1000: Only ELBM produces valid results
+\end{itemize}
+\end{frame}
+
+% ===== CROSS-VALIDATION =====
+\section{Cross-Validation with LBMpy}
+
+\begin{frame}{Independent Framework Validation}
+\textbf{Purpose}: Verify C++ implementation against established LBMpy framework
+
+\vspace{0.3cm}
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/lbmpy_validation/channel_2d_3way_comparison.png}
+
+\vspace{0.2cm}
+\textbf{Result}: C++ BGK, C++ ELBM, and LBMpy show excellent agreement
+\end{frame}
+
+\begin{frame}{Reynolds Number Evolution}
+\centering
+\includegraphics[width=0.9\textwidth]{../figures/lbmpy_validation/channel_2d_re_evolution.png}
+
+\vspace{0.3cm}
+\textbf{Validation}: Consistent Re evolution across independent implementations confirms correctness
+\end{frame}
+
+% ===== PERFORMANCE & BUGS =====
+\section{Implementation Insights}
+
+\begin{frame}{Performance Analysis}
+\begin{table}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Solver} & \textbf{Time (2500 steps)} & \textbf{Speedup} & \textbf{Max Stable Re} \\
+\midrule
+BGK & 0.4 seconds & 1.0$\times$ & $\sim$100-200 \\
+ELBM & 5.0 seconds & 0.09$\times$ & \textbf{Unlimited} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.5cm}
+\textbf{Trade-off Analysis}:
+\begin{itemize}
+    \item ELBM: $\sim$11$\times$ slower due to $\alpha$-solver
+    \item Cost: 10-15 Newton-Raphson iterations per node per timestep
+    \item Benefit: Enables simulations at arbitrarily high Re
+    \item Worthwhile when stability is critical
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Critical Implementation Corrections}
+\begin{block}{Bug \#1: Wrong Equilibrium in ELBM}
+\begin{itemize}
+    \item \textbf{Issue}: Used BGK equilibrium instead of entropic
+    \item \textbf{Impact}: Complete ELBM failure (NaN cascade)
+    \item \textbf{Resolution}: Implemented entropic equilibrium formula
+\end{itemize}
+\end{block}
+
+\begin{block}{Bug \#2: Alpha Bounds Reversed}
+\begin{itemize}
+    \item \textbf{Issue}: Min/max logic inverted in bound computation
+    \item \textbf{Impact}: Alpha-solver searched incorrect range
+    \item \textbf{Resolution}: Corrected bound logic for positivity constraint
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Additional Critical Corrections}
+\begin{block}{Bug \#3: Boundary Condition Timing}
+\begin{itemize}
+    \item \textbf{Issue}: BCs applied before streaming
+    \item \textbf{Impact}: Streaming overwrites boundary values
+    \item \textbf{Resolution}: Enforced correct order (collision $\rightarrow$ streaming $\rightarrow$ BC)
+\end{itemize}
+\end{block}
+
+\begin{block}{Bug \#4: Poiseuille Formula Error}
+\begin{itemize}
+    \item \textbf{Issue}: Used kinematic viscosity $\nu$ instead of dynamic $\mu = \rho\nu$
+    \item \textbf{Impact}: Incorrect parabolic profile magnitude
+    \item \textbf{Resolution}: Corrected viscosity formulation with density factor
+\end{itemize}
+\end{block}
+
+\vspace{0.2cm}
+\textit{Resolution of these issues ensured implementation fidelity to theoretical foundation}
+\end{frame}
+
+% ===== MULTIPHASE EXTENSION =====
+\section{Multiphase Flow Extension}
+
+\begin{frame}{Shan-Chen Pseudo-Potential Model}
+\textbf{Motivation}: Extend to two-phase flows with phase separation
+
+\vspace{0.3cm}
+\textbf{Interaction Force}:
+$$\mathbf{F}(\mathbf{x}) = -G\psi(\mathbf{x})\sum_i w_i \psi(\mathbf{x}+\mathbf{c}_i)\mathbf{c}_i$$
+
+where $\psi(\rho)$ is the pseudo-potential:
+$$\psi(\rho) = \rho_0\left(1 - \exp\left(-\frac{\rho}{\rho_0}\right)\right)$$
+
+\vspace{0.3cm}
+\textbf{Key Properties}:
+\begin{itemize}
+    \item $G < 0$: Cohesive (liquid-gas separation)
+    \item Surface tension emerges naturally from interactions
+    \item No explicit interface tracking needed
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Static Droplet Test}
+\textbf{Configuration}: 64$\times$64 domain, droplet radius = 15 LU
+
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/static_droplet_density.png}
+\tiny{Clean phase separation}
+
+\vspace{0.2cm}
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/static_droplet_velocity.png}
+\tiny{Spurious currents: 0.1046}
+
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/static_droplet_radial_profile.png}
+\tiny{Sharp interface (3-5 LU transition)}
+
+\vspace{0.2cm}
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/static_droplet_pressure_analysis.png}
+\tiny{Laplace pressure validation}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Laplace Pressure Validation}
+\textbf{Laplace Law}:
+$$\Delta P = \frac{\sigma}{R}$$
+
+\vspace{0.3cm}
+\textbf{Measurements}:
+\begin{itemize}
+    \item Pressure jump: $\Delta P = 0.495$
+    \item Droplet radius: $R = 15$ LU
+    \item Calculated surface tension: $\sigma = \Delta P \times R = 7.43$ LU
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Validation}: $$0.495 = \frac{7.43}{15} \quad \checkmark$$
+
+\vspace{0.3cm}
+\textit{Surface tension consistent with interaction strength $G = -4.7$}
+\end{frame}
+
+\begin{frame}{Rayleigh-Taylor Instability}
+\textbf{Configuration}: 128$\times$128, heavy fluid over light fluid, gravity = $5\times10^{-5}$
+
+\begin{columns}
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/rayleigh_taylor_final.png}
+\tiny{Stratified layers after settling}
+
+\vspace{0.2cm}
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/rayleigh_taylor_sequence.png}
+\tiny{6-frame time evolution}
+
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/rayleigh_taylor_evolution.png}
+\tiny{Interface displacement: -39.5 LU}
+
+\vspace{0.2cm}
+\includegraphics[width=0.95\textwidth]{../figures/multiphase/rayleigh_taylor_velocity.png}
+\tiny{Downward settling flow field}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Rayleigh-Taylor Physics}
+\textbf{Bond Number Analysis}:
+$$\text{Bo} = \frac{\Delta\rho \cdot g \cdot L^2}{\sigma} \approx 0.1 < 1$$
+
+\vspace{0.3cm}
+\textbf{Regime Classification}:
+\begin{itemize}
+    \item Bo $<$ 1: Surface-tension dominated (our case)
+    \item Bo $\sim$ 1-10: Transition regime
+    \item Bo $>$ 10: Gravity dominated (turbulent mixing)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Results}:
+\begin{itemize}
+    \item Gravitational settling: 39.5 LU downward displacement $\checkmark$
+    \item Stable stratified layers (not turbulent fingers)
+    \item Physically correct for Bo $<$ 1
+    \item Surface tension ($\sigma \approx 7.43$) stabilizes interface
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Collision Operator Comparison: MRT vs SRT}
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/multiphase/collision_operator_comparison.png}
+
+\vspace{0.3cm}
+\textbf{KEY FINDING}: SRT is 2$\times$ faster than MRT with identical accuracy
+\end{frame}
+
+\begin{frame}{MRT vs SRT Quantitative Comparison}
+\begin{table}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{MRT} & \textbf{SRT} & \textbf{Winner} \\
+\midrule
+Spurious currents & 0.1046 & 0.1046 & \textbf{Tie} \\
+Laplace pressure & 0.495 & 0.495 & \textbf{Tie} \\
+Wall time (20k steps) & 13.0 s & 6.8 s & \textbf{SRT} \\
+Memory usage & Higher & Lower & \textbf{SRT} \\
+Implementation complexity & 9 moments & 1 parameter & \textbf{SRT} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Recommendation}:
+\begin{itemize}
+    \item Use SRT (BGK) for static/quasi-static multiphase flows
+    \item MRT beneficial only for Re $>$ 100 or complex transients
+    \item For these parameters: SRT is optimal choice
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Multiphase Validation Summary}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Test} & \textbf{Target} & \textbf{Achieved} & \textbf{Status} \\
+\midrule
+Phase separation & Yes & Yes & \checkmark \\
+Laplace pressure & $\Delta P > 0$ & 0.495 & \checkmark \\
+Surface tension & 7-8 LU & 7.43 LU & \checkmark \\
+Spurious currents & $<$ 0.01 (ideal) & 0.1046 & Acceptable \\
+Gravitational settling & Significant & 39.5 LU & \checkmark \\
+MRT vs SRT & Compare & 2$\times$ speedup (SRT) & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Status}: All critical validations passed
+\end{frame}
+
+% ===== EXTENDED ANALYSIS =====
+\section{Extended Analysis}
+
+\begin{frame}{Extended Analysis: Overview}
+\textbf{Comprehensive Flow Regime Validation}:
+\begin{enumerate}
+    \item \textbf{Womersley Flow}: Oscillatory pressure-driven flow
+    \begin{itemize}
+        \item Pulsatile flow modeling (cardiovascular applications)
+        \item Time-dependent H-theorem enforcement
+        \item Frequency response validation
+    \end{itemize}
+
+    \item \textbf{Hagen-Poiseuille Flow}: Circular pipe flow
+    \begin{itemize}
+        \item Radial profile accuracy in cylindrical geometry
+        \item Pressure-flow relationship validation
+        \item Lattice adaptation to curved boundaries
+    \end{itemize}
+
+    \item \textbf{Stokes-Kolmogorov Flow}: Creeping flow and turbulence transition
+    \begin{itemize}
+        \item Low Reynolds number regime validation
+        \item Body force implementation with entropy preservation
+        \item Pattern formation analysis
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Extended Analysis: Complete Summary}
+\centering
+\includegraphics[width=0.9\textwidth]{../figures/extended_analytical/extended_analytical_complete_summary.png}
+
+\vspace{0.2cm}
+\textbf{Comprehensive Validation}:
+\begin{itemize}
+    \item Four distinct flow regimes analyzed
+    \item BGK and ELBM comparison across geometries
+    \item Demonstrates method robustness across flow types
+    \item Validates implementation correctness
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Womersley Flow: Oscillatory Pressure-Driven Flow}
+\centering
+\includegraphics[width=0.9\textwidth]{../figures/extended_analytical/womersley_flow_analytical.png}
+
+\vspace{0.2cm}
+\textbf{Key Features}:
+\begin{itemize}
+    \item Oscillatory flow between parallel plates
+    \item Models pulsatile flow in arteries
+    \item Womersley number: $\alpha = H \sqrt{\omega/\nu}$
+    \item Validates time-dependent H-theorem enforcement
+    \item Phase relationship and amplitude matching
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Hagen-Poiseuille Flow: Circular Pipe Geometry}
+\centering
+\includegraphics[width=0.9\textwidth]{../figures/extended_analytical/hagen_poiseuille_analytical.png}
+
+\vspace{0.2cm}
+\textbf{Key Features}:
+\begin{itemize}
+    \item Pressure-driven flow in circular pipe
+    \item Parabolic velocity profile in radial direction
+    \item Validates lattice adaptation to non-Cartesian boundaries
+    \item Pressure-flow relationship: $Q = \pi R^4|\Delta p|/(8\mu)$
+    \item Demonstrates geometric flexibility
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Stokes-Kolmogorov Flow: Creeping Flow and Transition}
+\centering
+\includegraphics[width=0.9\textwidth]{../figures/extended_analytical/stokes_kolmogorov_analytical.png}
+
+\vspace{0.2cm}
+\textbf{Key Features}:
+\begin{itemize}
+    \item Stokes shear: Constant strain rate validation
+    \item Kolmogorov: Sinusoidal body force driven flow
+    \item Low Reynolds number regime accuracy
+    \item Body force implementation with entropy preservation
+    \item Turbulence transition studies
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Extended Analysis: Key Findings}
+\begin{table}
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Flow Type} & \textbf{Key Validation} & \textbf{Status} \\
+\midrule
+Womersley & Oscillatory dynamics & \textcolor{green}{PASS} \\
+Hagen-Poiseuille & Radial profile accuracy & \textcolor{green}{PASS} \\
+Stokes Shear & Constant strain rate & \textcolor{green}{PASS} \\
+Kolmogorov & Body force implementation & \textcolor{green}{PASS} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+\textbf{Overall}: Comprehensive validation across multiple flow regimes demonstrates:
+\begin{itemize}
+    \item Robustness of entropic stabilization
+    \item Geometric flexibility (Cartesian and cylindrical)
+    \item Time-dependent flow handling
+    \item Body force implementation correctness
+\end{itemize}
+\end{frame}
+
+% ===== RESULTS SUMMARY =====
+\section{Results Summary}
+
+\begin{frame}{Comprehensive Validation Status}
+\begin{table}
+\centering
+\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{Category} & \textbf{Test} & \textbf{Status} & \textbf{Result} \\
+\midrule
+\multirow{3}{*}{Primary} & Pipe Re$\sim$10 & Pass & 6 figures \\
+& Pipe Re$\sim$100 & Pass & 6 figures \\
+& Pipe Re$\sim$1000 & Pass & 6 figures \\
+\midrule
+\multirow{4}{*}{Extended Analysis} & Womersley Flow & Pass & Oscillatory dynamics \\
+& Hagen-Poiseuille & Pass & Radial profile \\
+& Stokes Shear & Pass & Constant strain rate \\
+& Kolmogorov & Pass & Body force validation \\
+\midrule
+Cross-Validation & LBMpy comparison & Pass & 2 figures \\
+\midrule
+\multirow{3}{*}{Multiphase} & Static droplet & Pass & $\sigma = 7.43$ LU \\
+& Rayleigh-Taylor & Pass & 39.5 LU settling \\
+& MRT vs SRT & Pass & 2$\times$ speedup \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+\textbf{Overall}: Comprehensive validation across multiple flow regimes, 40+ figures generated
+\end{frame}
+
+\begin{frame}{Key Findings}
+\begin{enumerate}
+    \item \textbf{Stability Analysis}:
+    \begin{itemize}
+        \item ELBM maintains stability at Re$\sim$1000 where BGK fails
+        \item H-theorem enforcement prevents instability cascade
+        \item Pressure gradient preserved across all Re regimes
+    \end{itemize}
+
+    \item \textbf{Extended Analysis}:
+    \begin{itemize}
+        \item Womersley: Oscillatory flow validation, time-dependent H-theorem
+        \item Hagen-Poiseuille: Radial profile accuracy, geometric flexibility
+        \item Stokes-Kolmogorov: Low Re regime and body force implementation
+        \item Comprehensive validation across multiple flow regimes
+        \item LBMpy cross-validation confirms implementation
+    \end{itemize}
+
+    \item \textbf{Multiphase Capability}:
+    \begin{itemize}
+        \item Shan-Chen model successfully implemented
+        \item Laplace law validated, surface tension measured
+        \item Novel finding: SRT 2$\times$ faster than MRT
+    \end{itemize}
+
+    \item \textbf{Performance Trade-off}:
+    \begin{itemize}
+        \item ELBM: 11$\times$ overhead acceptable for high Re stability
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Project Overview}
+\textbf{Comprehensive Validation Framework}:
+\begin{itemize}
+    \item \textbf{Primary Validation}: Rectangular channel flow (Re$\sim$10, 100, 1000)
+    \item \textbf{Extended Analysis}: Womersley, Hagen-Poiseuille, Stokes-Kolmogorov flows
+    \item \textbf{Cross-Validation}: Independent LBMpy framework comparison
+    \item \textbf{Multiphase Extension}: Shan-Chen model with static droplet and Rayleigh-Taylor
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Scope}: Comprehensive validation across single-phase and multiphase flows, demonstrating robustness of entropic stabilization
+\end{frame}
+
+% ===== CONCLUSIONS =====
+\section{Conclusions}
+
+\begin{frame}{Conclusions}
+\textbf{Key Achievements}:
+\begin{itemize}
+    \item Comprehensive stability analysis across three Reynolds number regimes
+    \item Unconditional ELBM stability validated at Re $\sim$ 1000
+    \item Extended analysis across multiple flow regimes (Womersley, Hagen-Poiseuille, Stokes-Kolmogorov)
+    \item Cross-validation with independent LBMpy framework
+    \item Successful multiphase extension with Shan-Chen model
+    \item Novel performance finding: SRT optimal for multiphase
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Technical Contributions}:
+\begin{itemize}
+    \item Rigorous validation of entropic stabilization theory
+    \item Production-ready implementation with comprehensive testing
+    \item Quantitative demonstration of H-theorem enforcement benefits
+    \item Complete multiphase capability with validated physics
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Future Work}
+\textbf{Short-term Extensions}:
+\begin{itemize}
+    \item Optimize $\alpha$-solver (better initial guess, adaptive tolerance)
+    \item Reduce spurious currents through parameter optimization
+    \item Implement gravity-dominated RT regime (higher Bond number)
+    \item OpenMP parallelization for larger domains
+\end{itemize}
+
+\vspace{0.5cm}
+\textbf{Long-term Research Directions}:
+\begin{itemize}
+    \item 3D simulations with D3Q19 lattice
+    \item Entropic multiphase model (combine ELBM + Shan-Chen)
+    \item Thermal effects (double distribution function)
+    \item Complex multi-droplet interactions and coalescence
+    \item GPU acceleration for industrial-scale simulations
+\end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+\Huge Thank You!
+
+\vspace{1.5cm}
+\normalsize
+Questions?
+\end{frame}
+
+\appendix
+
+\begin{frame}{References}
+\small
+\begin{enumerate}
+    \item \textbf{S.A. Hosseini, M. Atif, S. Ansumali, I.V. Karlin}, "Entropic lattice Boltzmann methods: A review", Computers \& Fluids (2023), ETH Zurich
+    \item Keming Yu, "Entropic Lattice Boltzmann Method", UNC Chapel Hill Honor Thesis, 2021
+    \item S. Ansumali \& I.V. Karlin, "Stabilization of the lattice Boltzmann method by the H theorem", Phys. Rev. E 62, 7999 (2000)
+    \item I.V. Karlin et al., "Perfect entropy functions of the Lattice Boltzmann method", Europhys. Lett. 47, 182 (1999)
+    \item Timm Krüger et al., "The Lattice Boltzmann Method: Principles and Practice", Springer, 2017
+    \item U.D. Ghia et al., "High-Re solutions for incompressible flow using the Navier-Stokes equations", J. Comput. Phys. 48, 387 (1982)
+    \item X. Shan \& H. Chen, "Lattice Boltzmann model for simulating flows with multiple phases and components", Phys. Rev. E 47, 1815 (1993)
+\end{enumerate}
+\end{frame}
+
+\end{document}

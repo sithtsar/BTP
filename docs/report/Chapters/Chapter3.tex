@@ -1,0 +1,181 @@
+\chapter{Mathematical Foundations}
+
+\section{D2Q9 Lattice Structure}
+
+This project uses the D2Q9 lattice - a 2-dimensional lattice with 9 velocity directions. At each lattice point, particles can move in the following directions:
+
+\begin{equation}
+\mathbf{c}_i = \{(0,0), (\pm1,0), (0,\pm1), (\pm1,\pm1)\}
+\end{equation}
+
+\begin{itemize}
+    \item $\mathbf{c}_0 = (0,0)$: Rest particle (stays at the node)
+    \item $\mathbf{c}_{1-4}$: Cardinal directions (up, down, left, right)
+    \item $\mathbf{c}_{5-8}$: Diagonal directions
+\end{itemize}
+
+Each direction has an associated weight:
+\begin{equation}
+w_0 = \frac{4}{9}, \quad w_{1-4} = \frac{1}{9}, \quad w_{5-8} = \frac{1}{36}
+\end{equation}
+
+The lattice sound speed is $c_s = 1/\sqrt{3}$ in lattice units.
+
+We compute macroscopic quantities (density, velocity, pressure) from the distribution functions:
+\begin{equation}
+\rho = \sum_i f_i, \quad \rho\mathbf{u} = \sum_i \mathbf{c}_i f_i, \quad p = c_s^2\rho
+\end{equation}
+
+\section{BGK Collision Operator}
+
+The BGK equilibrium distribution is derived from a second-order Hermite polynomial expansion:
+\begin{equation}
+f_i^{\mathrm{eq}} = w_i \rho \left[1 + \frac{\mathbf{c}_i \cdot \mathbf{u}}{c_s^2} + \frac{(\mathbf{c}_i \cdot \mathbf{u})^2}{2c_s^4} - \frac{|\mathbf{u}|^2}{2c_s^2}\right]
+\end{equation}
+
+With $c_s^2 = 1/3$, this becomes:
+\begin{equation}
+f_i^{\mathrm{eq}} = w_i \rho \left[1 + 3(\mathbf{c}_i \cdot \mathbf{u}) + \frac{9}{2}(\mathbf{c}_i \cdot \mathbf{u})^2 - \frac{3}{2}|\mathbf{u}|^2\right]
+\end{equation}
+
+The collision step relaxes the distribution toward equilibrium:
+\begin{equation}
+f_i^{\mathrm{new}} = f_i - \omega(f_i - f_i^{\mathrm{eq}})
+\end{equation}
+
+The viscosity is related to the relaxation parameter through:
+\begin{equation}
+\nu = c_s^2\left(\frac{1}{\omega} - \frac{1}{2}\right)
+\end{equation}
+
+For high Reynolds numbers, we need small viscosity, which means $\omega$ must approach 2. This is where stability problems occur.
+
+\section{Entropic Collision Operator}
+
+The entropic approach is based on the discrete entropy (H-function):
+\begin{equation}
+H = \sum_{i} f_i \ln\left(\frac{f_i}{w_i}\right)
+\end{equation}
+
+The H-theorem states that entropy should not increase: $dH/dt \leq 0$. ELBM enforces this strictly.
+
+\subsection{Two-Step Collision Process}
+
+\textbf{Step 1 - Alpha Relaxation (Iso-Entropic Step)}:
+
+We move toward the entropic equilibrium while keeping entropy exactly constant:
+\begin{equation}
+\mathbf{f}^* = \mathbf{f} + \alpha(\mathbf{f}^{\mathrm{eq,ent}} - \mathbf{f})
+\end{equation}
+
+The parameter $\alpha$ must satisfy:
+\begin{equation}
+H(\mathbf{f}^*) = H(\mathbf{f})
+\end{equation}
+
+To find $\alpha$, we solve this nonlinear equation using Newton-Raphson iteration. The search is constrained to ensure all distribution functions remain positive:
+\begin{equation}
+\alpha \in [\alpha_{\min}, \alpha_{\max}]
+\end{equation}
+
+where the bounds are computed from:
+\begin{align}
+\alpha_{\min} &= \max\{0, \max_{i:\Delta f_i > 0} (-f_i/\Delta f_i)\} \\
+\alpha_{\max} &= \min_{i:\Delta f_i < 0} f_i/|\Delta f_i|
+\end{align}
+
+Here $\Delta f_i = f_i^{\mathrm{eq,ent}} - f_i$.
+
+\textbf{Step 2 - Beta Relaxation (Dissipative Step)}:
+
+Now we add dissipation to match the desired viscosity:
+\begin{equation}
+\mathbf{f}^{\mathrm{new}} = (1-\beta)\mathbf{f} + \beta \mathbf{f}^*
+\end{equation}
+
+The parameter $\beta$ is computed from the viscosity requirement:
+\begin{equation}
+\beta = \frac{1}{\alpha(3\nu + 0.5)}
+\end{equation}
+
+\subsection{Entropic Equilibrium}
+
+The entropic equilibrium distribution has a different form than BGK. It comes from maximizing entropy subject to mass and momentum conservation:
+\begin{equation}
+f_i^{\mathrm{eq,ent}} = w_i \rho \prod_{j=x,y} \left(2 - \sqrt{1 + u_j^2}\right) \left[\frac{2u_j + \sqrt{1 + 3u_j^2}}{1 - u_j}\right]^{c_{ij}}
+\end{equation}
+
+This equilibrium form ensures that moving toward it always decreases (or maintains) entropy, which is key to stability.
+
+\section{Boundary Conditions}
+
+\subsection{Zou-He Boundary Conditions}
+
+The Zou-He scheme \citep{zou1997} is used for inlet/outlet boundaries where we specify velocity or pressure. It extrapolates unknown distribution functions from known ones while enforcing mass and momentum conservation.
+
+\subsection{Bounce-Back Boundary Conditions}
+
+For solid walls with no-slip condition, we use bounce-back:
+\begin{equation}
+f_i(\mathbf{x}_{\mathrm{wall}}, t+1) = f_{\bar{i}}(\mathbf{x}_{\mathrm{wall}}, t)
+\end{equation}
+
+where $\bar{i}$ is the opposite direction to $i$. This reflects particles back in the direction they came from, creating zero velocity at the wall.
+
+\subsection{Order of Operations}
+
+The order of operations is critical:
+\begin{enumerate}
+    \item \textbf{Collision}: Apply BGK or ELBM collision operator
+    \item \textbf{Streaming}: Move distributions to neighboring nodes
+    \item \textbf{Boundary conditions}: Apply boundary rules
+\end{enumerate}
+
+Applying boundary conditions before streaming will cause them to be overwritten during the streaming step!
+
+\section{Multiphase Extensions}
+
+\subsection{Shan-Chen Pseudo-Potential Model}
+
+For multiphase flows, we extend the single-fluid ELBM with the Shan-Chen pseudo-potential model. Each fluid component has an associated scalar potential $\psi_k(\rho_k)$, and intermolecular interactions generate forces between neighboring lattice nodes:
+
+\begin{equation}
+\mathbf{F}_k = -g_k \psi_k(\mathbf{x}) \sum_i w_i \psi_k(\mathbf{x} + \mathbf{c}_i \Delta t) \mathbf{c}_i
+\end{equation}
+
+where $g_k$ is the interaction strength parameter. These forces are incorporated into the collision operator as additional momentum source terms. The H-theorem enforcement of ELBM extends naturally to multiphase systems, maintaining thermodynamic consistency across phase interfaces.
+
+For detailed derivations of the variational principle underlying Shan-Chen forces and interfacial tension calculations, see Appendix A.
+
+\subsection{Laplace Pressure Validation}
+
+For a static droplet at equilibrium, the pressure difference across the interface follows the Young-Laplace equation:
+\begin{equation}
+\Delta p = \frac{\sigma}{R}
+\end{equation}
+
+where $\sigma$ is surface tension and $R$ is the droplet radius. This provides a simple but rigorous test of multiphase implementation correctness, as deviations indicate force imbalance or numerical artifacts. (Detailed surface tension extraction procedures are in Appendix A.)
+
+\section{Active Matter Coupling}
+
+\subsection{Self-Propelled Particle Framework}
+
+For active matter, we model particle propulsion by coupling an active stress tensor into the collision operator:
+
+\begin{equation}
+\mathbf{Q}_{ab} = \alpha_{\text{act}}(p_a p_b - \frac{1}{d}\delta_{ab})
+\end{equation}
+
+where $\mathbf{p}$ is the particle orientation (unit nematic director), $\alpha_{\text{act}}$ controls activity strength, and $d$ is the spatial dimension. The orientation evolves via:
+
+\begin{equation}
+\frac{Dp_a}{Dt} = \Omega_{ab} p_b + \alpha(\mathbf{S}) p_a p_b \mathbf{S}_{bc} p_c
+\end{equation}
+
+where $\Omega$ is the vorticity tensor and $\mathbf{S}$ is the local strain rate tensor. This couples particle alignment to flow kinematics (passive term) and fluid strain (active response).
+
+The active stress contributions are incorporated as body forces in the momentum equation, maintaining H-theorem consistency through careful entropy accounting. (Full derivations of the entropy compatibility are in Appendix A.)
+
+\subsection{Stability Preservation}
+
+A key feature of the entropic framework is that active matter coupling preserves unconditional stability. The H-theorem remains satisfied even with active stress contributions, provided the entropy budget accounts for the active injection properly. This contrasts with BGK methods where active coupling often induces instability at high activity levels.

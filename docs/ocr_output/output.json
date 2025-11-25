@@ -1,0 +1,7 @@
+{
+  "model": "mistral-ocr-2505-completion",
+  "pages": [
+    {
+      "index": 0,
+      "markdown": "# Entropic Lattice Boltzmann Method \n\nKeming Yu\n\nApproved by Sorin Mitran (Thesis Advisor), Boyce Eugene Griffith (Defense Committee Member), Shahar Kovalsky (Defense Committee Member)\n\nA thesis presented for the degree of Bachelor of Science in Mathematics\n![img-0.jpeg](img-0.jpeg)\n\nDepartment of Mathematics\nUniversity of North Carolina in Chapel Hill\nApr. 2021",
+      "dimensions": 

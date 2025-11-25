@@ -1,0 +1,123 @@
+\chapter{Implementation and Code Architecture}
+\label{appendix:code}
+
+This appendix provides implementation details of the C++ BGK and ELBM solvers.
+
+\section{Repository Structure}
+
+\begin{lstlisting}[language=bash, numbers=none]
+BTP_FINAL/
+├── include/              # Header-only C++ implementation
+│   ├── core/            # Lattice, FluidState
+│   ├── solvers/         # BGKSolver, ELBMSolver
+│   ├── boundary/        # Zou-He, bounce-back
+│   └── validation/      # Analytical test cases
+├── src/                 # Executables
+│   ├── main.cpp         # Yu thesis replication
+│   ├── test_analytical.cpp
+│   └── test_benchmark.cpp
+└── scripts/build.sh     # Build automation
+\end{lstlisting}
+
+\section{Core Components}
+
+\subsection{Lattice Structure}
+
+\begin{lstlisting}[language=C++]
+template<int D, int Q>
+struct Lattice {
+    static constexpr std::array<std::array<int, D>, Q> c;
+    static constexpr std::array<double, Q> w;
+    static constexpr double cs2 = 1.0/3.0;
+};
+\end{lstlisting}
+
+\subsection{BGK Solver}
+
+\begin{lstlisting}[language=C++]
+void BGKSolver::collide() {
+    for (int y = 0; y < ny; ++y) {
+        for (int x = 0; x < nx; ++x) {
+            auto feq = computeEquilibrium(rho(x,y), u(x,y));
+            for (int i = 0; i < Q; ++i) {
+                f(x,y,i) -= omega * (f(x,y,i) - feq[i]);
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{ELBM Solver}
+
+\begin{lstlisting}[language=C++]
+void ELBMSolver::collide() {
+    for (int y = 0; y < ny; ++y) {
+        for (int x = 0; x < nx; ++x) {
+            auto feq = computeEntropicEquilibrium(rho(x,y), u(x,y));
+            auto [alpha_min, alpha_max] = computeAlphaBounds(f, feq);
+            double alpha = solveAlpha(f, feq, alpha_min, alpha_max);
+            double beta = 1.0 / (alpha * (3.0*nu + 0.5));
+
+            // Two-step collision
+            for (int i = 0; i < Q; ++i) {
+                double fstar = f(x,y,i) + alpha*(feq[i] - f(x,y,i));
+                f(x,y,i) = (1-beta)*f(x,y,i) + beta*fstar;
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+\section{Alpha Solver (Newton-Raphson)}
+
+\begin{lstlisting}[language=C++]
+double solveAlpha(const auto& f, const auto& feq,
+                  double alpha_min, double alpha_max) {
+    double alpha = 2.0;  // Initial guess
+    double H0 = computeH(f);
+
+    for (int iter = 0; iter < 20; ++iter) {
+        double R = 0.0, dR = 0.0;
+        for (int i = 0; i < Q; ++i) {
+            double f_alpha = f[i] + alpha*(feq[i] - f[i]);
+            R += f_alpha * log(f_alpha / w[i]);
+            dR += (feq[i] - f[i]) * (log(f_alpha/w[i]) + 1);
+        }
+        R -= H0;
+
+        if (abs(R) < 1e-12) break;
+        alpha = clamp(alpha - R/dR, alpha_min, alpha_max);
+    }
+    return alpha;
+}
+\end{lstlisting}
+
+\section{Computational Workflow}
+
+The simulation loop follows strict ordering:
+\begin{enumerate}
+    \item Compute macroscopic variables: $\rho, \mathbf{u}$ from $\mathbf{f}$
+    \item Collision: Apply BGK or ELBM operator
+    \item Streaming: $f_i(\mathbf{x}+\mathbf{c}_i) \leftarrow f_i(\mathbf{x})$
+    \item Boundary conditions: Apply \textit{after} streaming
+\end{enumerate}
+
+\textbf{Critical}: Boundary conditions must be applied after streaming, not before, to avoid corruption.
+
+\section{Build and Run}
+
+\begin{lstlisting}[language=bash, numbers=none]
+# Build
+./scripts/build.sh
+
+# Run thesis replication (19 figures)
+./build/main
+
+# Run analytical validation
+./build/test_analytical
+
+# Run benchmarks
+./build/test_benchmark
+\end{lstlisting}
+
+Complete source code available at: \texttt{github.com/yourusername/BTP\_FINAL}

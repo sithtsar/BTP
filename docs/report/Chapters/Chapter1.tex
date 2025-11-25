@@ -1,0 +1,31 @@
+\chapter{Introduction}
+
+\section{Motivation}
+
+Computational Fluid Dynamics (CFD) helps us simulate and understand fluid flows in engineering applications. Traditional methods solve the Navier-Stokes equations directly, but the Lattice Boltzmann Method (LBM) offers a different approach. Instead of tracking the fluid velocity and pressure at each point, LBM simulates how microscopic fluid particles move and collide on a lattice grid.
+
+The most common LBM approach uses the BGK collision operator, named after Bhatnagar, Gross, and Krook. While BGK is simple and fast, it has a serious problem: it becomes unstable when simulating high-speed flows (high Reynolds numbers). The simulation can produce nonsensical results or crash completely.
+
+\section{Problem Statement}
+
+When we try to simulate flows at Reynolds numbers around 1000, the BGK method often fails. This happens because as we decrease viscosity to achieve higher Reynolds numbers, a parameter called $\omega$ gets closer to 2, which is the stability limit. Near this limit, the simulation becomes numerically unstable.
+
+The Entropic Lattice Boltzmann Method (ELBM) claims to solve this problem by enforcing the second law of thermodynamics at every step. This project investigates whether ELBM truly provides better stability than BGK at high Reynolds numbers.
+
+\section{Objectives}
+
+The goals of this project are:
+
+\begin{enumerate}
+    \item Implement both BGK and ELBM solvers in C++ using the D2Q9 lattice structure
+    \item Test the implementations against known analytical solutions like Couette flow, Poiseuille flow, and Taylor-Green vortex
+    \item Compare the stability and accuracy of both methods across different Reynolds numbers (Re $\sim$ 10, 100, and 1000)
+    \item Measure the computational cost difference between BGK and ELBM
+    \item Understand why BGK fails and ELBM succeeds at high Reynolds numbers
+    \item Validate ELBM against an extended benchmark suite including rectangular channel flows, lid-driven cavity, flow past a cylinder, and multiphase flows using the Shan-Chen model
+    \item Investigate preliminary applications of ELBM to active matter systems with self-propelled particle coupling
+\end{enumerate}
+
+\section{Thesis Organization}
+
+Chapter 2 reviews relevant literature on lattice Boltzmann methods, entropic approaches, and extensions to multiphase and active matter systems. Chapter 3 explains the mathematical foundations of both BGK and ELBM collision operators, with summary forms of key equations and non-technical introductions to multiphase and active matter extensions. Chapter 4 presents comprehensive validation results from analytical tests, channel flows at different Reynolds numbers, and benchmark cases. Chapter 5 provides detailed performance comparison including runtime benchmarks, accuracy metrics, and cost-benefit analysis, followed by results from multiphase and active matter preliminary studies. Chapter 6 provides conclusions and suggestions for future work. The mathematical derivations are moved to Appendix A for practitioners focused on implementation, while Appendix B provides implementation details and Appendix C contains code algorithms.

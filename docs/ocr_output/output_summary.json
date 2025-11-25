@@ -1,0 +1,271 @@
+{
+  "model": "mistral-ocr-2505-completion",
+  "num_pages": 53,
+  "pages": [
+    {
+      "index": 0,
+      "markdown_preview": "# Entropic Lattice Boltzmann Method \n\nKeming Yu\n\nApproved by Sorin Mitran (Thesis Advisor), Boyce Eugene Griffith (Defense Committee Member), Shahar Kovalsky (Defense Committee Member)\n\nA thesis prese...",
+      "num_images": 1
+    },
+    {
+      "index": 1,
+      "markdown_preview": "# Entropic Lattice Boltzmann Method \n\nKeming Yu\n\n\n#### Abstract\n\nLattice Boltzmann methods are kinetic descriptions of fluid flow that are efficiently implemented through a stream and collide approach...",
+      "num_images": 0
+    },
+    {
+      "index": 2,
+      "markdown_preview": "# Chapter 1 \n\n## Kinetic Theory of Gas\n\nFor the discussion of kinetic theory of gas, we follow a standard textbook: [10] Richard L. Liboff. Kinetic theory: classical, quantum, and relativistic descrip...",
+      "num_images": 0
+    },
+    {
+      "index": 3,
+      "markdown_preview": "System constant of motion and of degree of freedom $N$ lives in a $2 N$ Cartesian space with $q_{l}$ and $p_{l}$ as variables. This is the $\\Gamma$-space. Dynamical variables live in $2 N+1$ Cartesian...",
+      "num_images": 0
+    },
+    {
+      "index": 4,
+      "markdown_preview": "The Geometric significance of Liouville Theorem is volume elements in the $\\Gamma$-space remain the same before and after the canonical transformation. Now, consider the action integral from time $t$ ...",
+      "num_images": 0
+    },
+    {
+      "index": 5,
+      "markdown_preview": "This solution can be seen as how $D$ evolves in time for a point in the hyper-plane $(q . p)$ in $\\tilde{\\Gamma}$-space. Liouville's Equation, as mentioned above, can be solved by method of characteri...",
+      "num_images": 0
+    },
+    {
+      "index": 6,
+      "markdown_preview": "Here, we used velocity $\\boldsymbol{v}_{s}=\\boldsymbol{p}_{s} / m$. The eigenvalues and eigenvectors can be obtained:\n\n$$\n\\begin{gathered}\n\\omega_{(\\boldsymbol{k})}=\\sum_{s=1}^{N} \\boldsymbol{v}_{s} \\...",
+      "num_images": 0
+    },
+    {
+      "index": 7,
+      "markdown_preview": "where $C$ is a constant. Therefore, it is also obvious that function $f_{N}(q, p, t)$ also solves Liouville's Equation. The function $f_{N}(q, p, t)$ has the physical significance of joint probability...",
+      "num_images": 0
+    },
+    {
+      "index": 8,
+      "markdown_preview": "2. System does not change for a time interval of zero.\n\n$$\n\\prod\\left(\\boldsymbol{z}, t_{0} \\mid \\boldsymbol{z}_{0}, t_{0}\\right)=\\delta\\left(\\boldsymbol{z}-\\boldsymbol{z}_{0}\\right)\n$$\n\n3. $\\prod\\lef...",
+      "num_images": 0
+    },
+    {
+      "index": 9,
+      "markdown_preview": "The central limit theorem address the siuation when $n \\rightarrow \\infty$ and the probability distribution are all the same for $n$ variables. We can find the expectation and variance for $n$ random ...",
+      "num_images": 0
+    },
+    {
+      "index": 10,
+      "markdown_preview": "For a two particle potential, its force $\\boldsymbol{G}_{i j}$ is antisymmetric under particle exchange. Therefore, we have the equality\n\n$$\n\\boldsymbol{G}_{i j}=-\\frac{\\partial}{\\partial \\boldsymbol{...",
+      "num_images": 0
+    },
+    {
+      "index": 11,
+      "markdown_preview": "3. The first equation $\\mathrm{BY}_{1}$ is the generic form of all kinetic equations\n\n$$\n\\frac{\\partial f_{1}}{\\partial t}+\\frac{\\boldsymbol{p}_{1}}{m} \\cdot \\frac{\\partial}{\\partial \\boldsymbol{x}_{1...",
+      "num_images": 0
+    },
+    {
+      "index": 12,
+      "markdown_preview": "If the two particles are statistically independent, $C_{2}=0$ and we say they are uncorrelated. We will use $C_{n}(1, \\ldots n)$ to describe the correlation function between $n$ particles. First, cons...",
+      "num_images": 0
+    },
+    {
+      "index": 13,
+      "markdown_preview": "where $\\hat{L}_{0}$ is a free particle operator and the perturbation to it is\n\n$$\n\\delta \\hat{L}=\\sum_{l<j}^{N} \\sum \\frac{\\partial}{\\partial \\boldsymbol{x}_{i}} \\Phi_{i j} \\cdot\\left[\\frac{\\partial}{...",
+      "num_images": 0
+    },
+    {
+      "index": 14,
+      "markdown_preview": "the matrix element can be evaluated\n\n$$\n\\left\\langle(\\boldsymbol{k})\\right| e^{i \\boldsymbol{K} \\cdot\\left(\\boldsymbol{x}_{l}-\\boldsymbol{x}_{n}\\right)}\\left|\\left(\\boldsymbol{k}^{\\prime}\\right)\\right...",
+      "num_images": 0
+    },
+    {
+      "index": 15,
+      "markdown_preview": "To discuss the behavior of rare gas, the following expansion is introduced\n\n$$\nF_{s}\\left(1, \\ldots s ; F_{1}\\right)=F_{s}^{(0)}+\\frac{1}{v} F_{s}^{(1)}+\\frac{1}{v^{2}} F_{s}^{(2)}+\\ldots\n$$\n\nSubstitu...",
+      "num_images": 0
+    },
+    {
+      "index": 16,
+      "markdown_preview": "where $\\boldsymbol{x}_{k}^{(s)}, \\boldsymbol{p}_{k}^{(s)}$ are the phase values for the $k$ th particles traveled back in time to $t=-\\infty$. Returning to equation 1.104\n\n$$\n\\hat{D}^{(0)} F_{s}^{(0)}...",
+      "num_images": 0
+    },
+    {
+      "index": 17,
+      "markdown_preview": "we obtain the final equation\n\n$$\n\\frac{\\partial F_{1}}{\\partial t}+\\frac{\\boldsymbol{p}_{1}}{m} \\frac{\\partial F_{1}}{\\partial \\boldsymbol{x}_{1}}=\\frac{2 \\pi}{v} \\int \\mathrm{~d} \\boldsymbol{p}_{2} \\...",
+      "num_images": 0
+    },
+    {
+      "index": 18,
+      "markdown_preview": "With the denominator vanishing at the apse:\n\n$$\n1-s^{2} \\ddot{u}^{2}-\\frac{V(\\ddot{u})}{E}=0\n$$\n\nDefining the nondimensional inverse radius $\\beta=s u$ and nondimensional impact parameter $b=$ $s(E / ...",
+      "num_images": 0
+    },
+    {
+      "index": 19,
+      "markdown_preview": "First, we consider $\\delta R_{-}$. Velocity of all particles could be divided into two groups, the small velocity group that has velocity of interval $\\delta \\boldsymbol{v}$ about $\\boldsymbol{v}$ and...",
+      "num_images": 0
+    },
+    {
+      "index": 20,
+      "markdown_preview": "Changing variables $\\left(\\boldsymbol{v}, \\boldsymbol{v}_{1}\\right) \\rightarrow\\left(\\boldsymbol{v}_{1}, \\boldsymbol{v}\\right)$,\n\n$$\n\\hat{I}[\\phi]=\\hat{I}\\left[\\phi_{1}\\right]\n$$\n\nNext, we consider\n\n$...",
+      "num_images": 0
+    },
+    {
+      "index": 21,
+      "markdown_preview": "Therefore we have the following evaluation for $4 \\hat{I}(1+\\ln f)$\n\n$$\n4 \\hat{I}(1+\\ln f)=-\\int \\mathrm{d} \\boldsymbol{v} \\int \\mathrm{~d} \\boldsymbol{v}_{1}\\left[f^{\\prime} f_{1}^{\\prime}-f_{1} f\\ri...",
+      "num_images": 0
+    },
+    {
+      "index": 22,
+      "markdown_preview": "where $F$ satisfy the moment relations\n\n$$\n\\begin{aligned}\n\\int F \\mathrm{~d} \\boldsymbol{v} & =n \\\\\n\\int F \\boldsymbol{v} \\mathrm{~d} \\boldsymbol{v} & =n \\boldsymbol{u} \\\\\n\\int F \\frac{m(\\boldsymbol{...",
+      "num_images": 0
+    },
+    {
+      "index": 23,
+      "markdown_preview": "Now, substituting all above expansions and matching terms with different orders of $\\varepsilon$, we have\n\n$$\n\\begin{aligned}\n0 & =\\hat{J}^{(0)}\\left(F^{(0)}\\right) \\\\\n\\left(\\frac{\\partial_{0}}{\\parti...",
+      "num_images": 0
+    },
+    {
+      "index": 24,
+      "markdown_preview": "this is a linear inhomogeneous integral equation for distribution $\\Phi$. If this is solved, the distribution $F$ is known to the second order with $F=F^{(0)}(1+\\Phi)$. From the structure of operator ...",
+      "num_images": 0
+    },
+    {
+      "index": 25,
+      "markdown_preview": "where $\\tilde{\\Lambda}$ is the symmetric strain tensor in fluid dynamics.\n\n$$\n\\Lambda_{i k}=\\frac{1}{2}\\left(\\frac{\\partial u_{i}}{\\partial x_{k}}+\\frac{\\partial u_{k}}{\\partial x_{i}}\\right)\n$$\n\nWe r...",
+      "num_images": 0
+    },
+    {
+      "index": 26,
+      "markdown_preview": "# Chapter 2 \n\n## Lattice Boltzmann Method\n\nSince the inventio of lattice boltzmann method, a range of literature has been dedicated to this field. Textbooks are also written to explain the numerical s...",
+      "num_images": 0
+    },
+    {
+      "index": 27,
+      "markdown_preview": "This defines the discrete free-streaming operator as\n\n$$\n\\Delta_{i} n_{i}=n_{i}\\left(\\vec{x}+c_{i a}, t+1\\right)-n_{i}(\\vec{x}, t)\n$$\n\nThis is a direct translation of the Boltzmann free-streaming opea...",
+      "num_images": 0
+    },
+    {
+      "index": 28,
+      "markdown_preview": "where the accent $\\tilde{n}$ denotes complement to one $\\left(\\tilde{n}_{i}=1-n_{i}\\right)$ as befits to fermionic degrees of freedom. Example: the probability of occupying state $\\bar{s}=[100100\\rang...",
+      "num_images": 0
+    },
+    {
+      "index": 29,
+      "markdown_preview": "where\n\n$$\n\\begin{gathered}\n\\rho_{m}=\\int f \\phi_{m}(\\vec{v}) \\mathrm{d} \\vec{v} \\\\\nJ_{a m}=\\int f v_{a} \\phi_{m}(\\vec{v}) \\mathrm{d} \\vec{v} \\\\\nC_{m}=\\int C[f] \\phi_{m}(\\vec{v}) \\mathrm{d} \\vec{v}\n\\en...",
+      "num_images": 0
+    },
+    {
+      "index": 30,
+      "markdown_preview": "is the lattice sound speed. Notice the Galilean invariance is broken by this manner with\n\n$$\nG(\\rho)=\\frac{1-2 d}{1-d} \\neq 1\n$$\n\nwhere $d=\\rho / b$ is reduced fluid density. Now, equation 2.17 become...",
+      "num_images": 0
+    },
+    {
+      "index": 31,
+      "markdown_preview": "Unlike the usual continuous population, $f_{i}(\\boldsymbol{x}, t)$ is discrete in space, time and velocity. For space and time, the discretization is carried out with time step $\\Delta t$ and lattice ...",
+      "num_images": 0
+    },
+    {
+      "index": 32,
+      "markdown_preview": "To do this, we first perform a non-dimensionalization of force-free Boltzmann Equation\n\n$$\n\\frac{\\partial f}{\\partial t}+\\xi_{\\alpha} \\frac{\\partial f}{\\partial \\alpha}=\\Omega(f)\n$$\n\nand non-dimension...",
+      "num_images": 0
+    },
+    {
+      "index": 33,
+      "markdown_preview": "By the rules of Gaussian Quadrature, for a polynomial of order $N$, it needs at least $n \\geqslant(N+$ 1) $/ 2$ terms to calculate the moments exactly. Therefore, the choice of $n$ affects the number ...",
+      "num_images": 0
+    },
+    {
+      "index": 34,
+      "markdown_preview": "We can also see from here that $1 / 2<\\Delta t / \\tau$ is a necessary condition for numerical stability. For cases $1 / 2>\\Delta t / \\tau, f_{i}$ will oscillates with an increasing amplitude. Now, we ...",
+      "num_images": 0
+    },
+    {
+      "index": 35,
+      "markdown_preview": "Here, only keeping terms in the first order of perturbative expansion and reversing it allows us to get Euler's equation sets: the first one is continuity equation and the second one is Euler's moment...",
+      "num_images": 0
+    },
+    {
+      "index": 36,
+      "markdown_preview": "# Chapter 3 \n\n## Entropic methods\n\nThe first portion of the chapter which focuses on the discussion of relationship between numerical instability and H-theorem follows a textbook[12] and a published l...",
+      "num_images": 0
+    },
+    {
+      "index": 37,
+      "markdown_preview": "the BGK equation on convective equation has the form of\n\n$$\n\\partial_{t} f+v_{a} \\partial_{a} f=\\omega(f-g)\n$$\n\nTaking dot product with $-f$ over the velocity space on both side:\n\n$$\n\\partial_{t} s+\\p...",
+      "num_images": 0
+    },
+    {
+      "index": 38,
+      "markdown_preview": "Nonlinear stability is more complicated: it holds in a restricted strip $0<\\omega<\\omega_{N L}[f]<2$, where the threshold $\\omega_{N L}[f]$ is an unknown functional of the solution $f$. It is almost i...",
+      "num_images": 0
+    },
+    {
+      "index": 39,
+      "markdown_preview": "The expression is not changed when multiply the right side by $\\boldsymbol{I}=\\boldsymbol{M}^{-1} \\boldsymbol{M}$, assuming it can be inverted:\n\n$$\n\\begin{aligned}\n\\boldsymbol{f}^{n+1}-\\boldsymbol{f}^...",
+      "num_images": 0
+    },
+    {
+      "index": 40,
+      "markdown_preview": "be all the intermediate steps toward equilibrium. The approximation is only valid if the scalar variable $a \\geqslant 0$ is not too large to exceed a certain limit $a^{*}$. This limit is important for...",
+      "num_images": 0
+    },
+    {
+      "index": 41,
+      "markdown_preview": "2. In the section step, dissipation is introduced and value of $H$ is decreased.\n\nA collision integral is defined on the kinetic equation:\n\n$$\n\\boldsymbol{\\Delta}(\\boldsymbol{f})=\\boldsymbol{f}^{\\math...",
+      "num_images": 0
+    },
+    {
+      "index": 42,
+      "markdown_preview": "3. $\\alpha=1$, a population that is the same as $\\boldsymbol{f}^{\\text {eq }}$. Local minimum of $H$-function is achieved.\n4. $\\alpha \\in(1,2)$, the value of $H$-function is increasing.\n5. $\\alpha=2$,...",
+      "num_images": 0
+    },
+    {
+      "index": 43,
+      "markdown_preview": "This is derived from maximizing the Shanon entropy $S[p]$ subject to the constraints on the expected values of $n$ functions $f_{i}^{k}=f^{k}\\left(x_{i}\\right)$, labeled by superscript $k=1,2 \\ldots n...",
+      "num_images": 0
+    },
+    {
+      "index": 44,
+      "markdown_preview": "# 3.4.1 Derivations from Distinguishability \n\nConsider the difference between two probability distributions\n\n$$\n\\Delta=\\frac{p(x \\mid \\theta+\\mathrm{d} \\theta)-p(x \\mid \\theta)}{p(x \\mid \\theta)}=\\fra...",
+      "num_images": 0
+    },
+    {
+      "index": 45,
+      "markdown_preview": "# 3.4.3 Futher Works \n\nThe design of information geometry and its application on LBM is in the frontier of the research field. To see how information geometry hinted us on a new relaxation scheme, we ...",
+      "num_images": 1
+    },
+    {
+      "index": 46,
+      "markdown_preview": "prominent in the fluid. On the other hand, if viscosity is low or the Reynold's number is high, the fluid would not loses its drop on its pressure profile if it is stable physically. Fluid dynamics st...",
+      "num_images": 3
+    },
+    {
+      "index": 47,
+      "markdown_preview": "![img-5.jpeg](img-5.jpeg)\n\nFigure 3.5.\n\n- Centerplane Pressure Profile after 2500 time steps (LBGK)\n![img-6.jpeg](img-6.jpeg)\n\nFigure 3.6.\n\n- Centerplane Pressure Profile after 2500 time steps (ELBM)\n...",
+      "num_images": 4
+    },
+    {
+      "index": 48,
+      "markdown_preview": "- Centerline Pressure Profile (ELBM) (ELBM is, on the other hand, irresponsive to the change to a smaller viscosity. Diffusion is minimal in the simulation)\n![img-9.jpeg](img-9.jpeg)\n\nFigure 3.9.\n\n- C...",
+      "num_images": 4
+    },
+    {
+      "index": 49,
+      "markdown_preview": "- Centerplane Pressure Profile after 2500 time steps (ELBM)\n![img-13.jpeg](img-13.jpeg)\n\nFigure 3.13.\n3. Total Breakdonw of LBGK, Stable Simulation for ELBM: $\\nu=0.001 \\mathrm{~m}^{2} / \\mathrm{s} \\D...",
+      "num_images": 4
+    },
+    {
+      "index": 50,
+      "markdown_preview": "- Centerplane Pressure Profile after 1250 time steps (ELBM)\n![img-17.jpeg](img-17.jpeg)\n\nFigure 3.17.\n\n- Centerplane Pressure Profile after 2500 time steps (LBGK)\n![img-18.jpeg](img-18.jpeg)\n\nFigure 3...",
+      "num_images": 3
+    },
+    {
+      "index": 51,
+      "markdown_preview": "....",
+      "num_images": 0
+    },
+    {
+      "index": 52,
+      "markdown_preview": "# Bibliography \n\n[1] S Ansumali, I. V Karlin, and H. C Öttinger. Minimal entropic kinetic models for hydrodynamics. Europhysics Letters (EPL), 63(6):798-804, sep 2003.\n[2] Santosh Ansumali and Iliya V...",
+      "num_images": 0
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+\chapter{Literature Review}
+
+\section{Lattice Boltzmann Method Background}
+
+The Lattice Boltzmann Method has its roots in Lattice Gas Cellular Automata developed in the 1980s \citep{frisch1986}. Unlike traditional CFD methods that directly solve the Navier-Stokes equations, LBM simulates fluid flow by tracking the evolution of particle distribution functions on a discrete lattice.
+
+In LBM, we track $f_i(\mathbf{x}, t)$ - the density of particles at position $\mathbf{x}$ and time $t$ moving in direction $i$. The algorithm alternates between two steps:
+\begin{itemize}
+    \item \textbf{Collision}: Particles at each lattice node relax toward a local equilibrium
+    \item \textbf{Streaming}: Particles move to neighboring nodes along their velocity directions
+\end{itemize}
+
+\section{BGK Collision Operator}
+
+The BGK collision operator, introduced by Bhatnagar, Gross, and Krook in 1954 \citep{bhatnagar1954}, simplifies particle collisions to a single equation:
+\begin{equation}
+f_i^{\mathrm{new}} = f_i - \omega(f_i - f_i^{\mathrm{eq}})
+\end{equation}
+
+Here, $f_i^{\mathrm{eq}}$ is the equilibrium distribution, and $\omega$ is the relaxation parameter related to fluid viscosity. The parameter $\omega$ must stay below 2 for numerical stability \citep{sterling1996}.
+
+The problem is that to simulate high Reynolds number flows (low viscosity), we need $\omega$ close to 2. This puts the simulation near the edge of stability, and small perturbations can cause it to blow up.
+
+\section{Entropy and Stability}
+
+The second law of thermodynamics states that entropy must always increase (or stay constant) in physical systems. Recent research has shown that enforcing this law in LBM simulations can guarantee stability \citep{karlin1999,ansumali2000}.
+
+The key insight is defining a discrete entropy function:
+\begin{equation}
+H = \sum_i f_i \ln\left(\frac{f_i}{w_i}\right)
+\end{equation}
+where $w_i$ are the lattice weights. The H-theorem states that $dH/dt \leq 0$ - entropy should not increase during collisions.
+
+BGK's equilibrium distribution comes from a mathematical expansion (Hermite polynomials) that matches the correct hydrodynamic moments but does not minimize entropy. This mismatch allows the simulation to violate the second law, leading to instability.
+
+\section{Entropic Lattice Boltzmann Method}
+
+The Entropic LBM, developed by Karlin, Ansumali and collaborators \citep{karlin1999,ansumali2000,ansumali2003}, fixes this problem by explicitly enforcing the H-theorem at every collision step.
+
+ELBM uses a two-step collision process:
+\begin{enumerate}
+    \item \textbf{Alpha step}: Move toward equilibrium while keeping entropy exactly constant
+    \item \textbf{Beta step}: Add the right amount of dissipation to match the desired viscosity
+\end{enumerate}
+
+This separation of stability (controlled by $\alpha$) from viscosity (controlled by $\beta$) is what allows ELBM to remain stable at any Reynolds number.
+
+The entropic equilibrium distribution is different from BGK's polynomial form - it comes from maximizing entropy subject to conservation constraints. This ensures every collision step respects thermodynamics.
+
+\section{Alternative Stabilization Methods}
+
+Other researchers have proposed different ways to stabilize LBM:
+
+\textbf{Multiple Relaxation Time (MRT)} \citep{dhumieres1992} uses different relaxation rates for different moments of the distribution. This improves stability compared to BGK but requires tuning multiple parameters and still has limits.
+
+\textbf{Regularized LBM} \citep{latt2006} filters out non-hydrodynamic modes before collision. This helps but is somewhat ad-hoc without a fundamental physical principle.
+
+\textbf{Entropic approach} is unique because it's based on a fundamental law of physics (second law of thermodynamics) rather than empirical fixes. This gives it a theoretical guarantee of unconditional stability.
+
+\section{Beyond Single-Phase Flows}
+
+\subsection{Multiphase Lattice Boltzmann Method}
+
+While single-phase flows represent a crucial validation domain, many practical engineering applications involve interfacial phenomena. The Shan-Chen pseudo-potential model \citep{shan1993,shan1994} provides an elegant framework for multiphase flows within the LBM paradigm. Rather than explicitly tracking interfaces, the Shan-Chen model introduces intermolecular potential forces that naturally generate phase separation and surface tension effects.
+
+In this approach, a scalar pseudo-potential $\psi(\rho)$ is defined for each fluid component, and intermolecular interactions are modeled through pairwise forces between lattice nodes. The interface is implicitly represented as a density gradient region where these forces create surface tension-like behavior. This formulation allows straightforward extension of both BGK and ELBM solvers to multiphase problems. The H-theorem enforcement of ELBM provides the same unconditional stability benefits in multiphase settings, making it particularly valuable for high-viscosity-ratio and high-Reynolds-number interfacial flows.
+
+In this work, we present preliminary multiphase capabilities validated against analytical solutions for static droplet equilibrium, where the Laplace pressure jump across the interface is compared to theoretical predictions \citep{laplace1806}. This demonstrates the framework's potential for simulating capillary-driven flows and phase-change processes.
+
+\subsection{Active Matter and Self-Propelled Particles}
+
+The coupling of self-propelled particles with fluid dynamics represents an emerging frontier in complex fluids research. Active matter systems—ranging from biological swimmers like bacteria to engineered micro-robots—exhibit fundamentally different collective dynamics than passive particles suspended in fluid. These systems maintain continuous energy input, breaking time-reversal symmetry at the microscale.
+
+We explore a preliminary framework for coupling self-propelled particles with ELBM by introducing an active stress tensor coupled to the local fluid strain. The particle orientation is tracked via a nematic tensor, and the propulsive force generates local momentum injection into the fluid. This approach extends the entropy-conserving collision operator to include active stress contributions, maintaining the H-theorem guarantee even with active coupling.
+
+This work is in its preliminary phase and focuses on validating the stability and consistency of the coupled system rather than exploring sophisticated active matter phenomena. We demonstrate that ELBM's unconditional stability carries over to the active case, providing a promising foundation for future investigations of swarming dynamics, active turbulence, and other nonequilibrium phenomena.

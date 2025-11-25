@@ -1,0 +1,307 @@
+\chapter{Detailed Mathematical Derivations}
+
+\section{Entropic Equilibrium Construction}
+
+\subsection{Variational Principle}
+
+Following \citet{karlin1999}, the entropic equilibrium is derived by minimizing the H-function under moment constraints:
+
+\begin{equation}
+\min_{f_i^{\mathrm{eq}}} H = \sum_{i=1}^{Q} h_i(f_i^{\mathrm{eq}})
+\end{equation}
+
+subject to conservation:
+\begin{align}
+\sum_{i=1}^{Q} f_i^{\mathrm{eq}} &= \rho \\
+\sum_{i=1}^{Q} \mathbf{c}_i f_i^{\mathrm{eq}} &= \rho\mathbf{u}
+\end{align}
+
+Introducing Lagrange multipliers $\lambda_0, \lambda_a$:
+\begin{equation}
+\delta \sum_{i=1}^{Q}\left[h_i(f_i^{\mathrm{eq}}) - \lambda_0 f_i^{\mathrm{eq}} - \lambda_a c_{ia} f_i^{\mathrm{eq}}\right] = 0
+\end{equation}
+
+yields:
+\begin{equation}
+h_i'(f_i^{\mathrm{eq}}) = \lambda_0 + \lambda_a c_{ia}
+\end{equation}
+
+\subsection{Perfect Entropy Functional}
+
+Using the perfect entropy functional \citep{karlin1999}:
+\begin{equation}
+H = \sum_{i=1}^{Q} f_i \ln\left(\frac{f_i}{w_i}\right)
+\end{equation}
+
+For $3^D$ stencils, the equilibrium is:
+\begin{equation}
+f_i^{\mathrm{eq}} = w_i \exp(\lambda_0) \prod_{a=1}^{D} \exp(c_{ia}\lambda_a)
+\end{equation}
+
+Change of variables: $X = \exp(-\lambda_0)$, $Z_a = \exp(\lambda_a)$:
+\begin{equation}
+f_i^{\mathrm{eq}} = w_i X^{-1} \prod_{a=1}^{D} Z_a^{c_{ia}}
+\end{equation}
+
+Applying moment constraints:
+\begin{align}
+\rho X &= \sum_{i=1}^{Q} w_i \prod_{a=1}^{D} Z_a^{c_{ia}} \\
+\rho u_p X &= \sum_{i=1}^{Q} w_i c_{ip} \prod_{a=1}^{D} Z_a^{c_{ia}}
+\end{align}
+
+\subsection{Closed-Form Solution}
+
+Solving yields:
+\begin{align}
+Z_a &= \frac{2u_a + \sqrt{(u_a/c_s)^2 + 1}}{1 - u_a} \\
+X^{-1} &= \rho \prod_{a=1}^{D}\left(2 - \sqrt{(u_a/c_s)^2 + 1}\right)
+\end{align}
+
+Final entropic equilibrium:
+\begin{equation}
+f_i^{\mathrm{eq}} = w_i \rho \prod_{a=1}^{D} \left(2 - \sqrt{(u_a/c_s)^2 + 1}\right) \left(\frac{2u_a + \sqrt{(u_a/c_s)^2 + 1}}{1 - u_a}\right)^{c_{ia}}
+\end{equation}
+
+\subsection{Properties}
+
+\textbf{Pressure tensor deviation}: Unlike BGK equilibrium, entropic equilibrium has pressure deviation:
+\begin{equation}
+\bar{\Pi}_{xx}^{(0)} + \bar{\Pi}_{yy}^{(0)} = 2\rho c_s^2 + P_{xx}^* + P_{yy}^*
+\end{equation}
+
+where:
+\begin{equation}
+P_{xx}^* = -\rho c_s^2\left[(u_x/c_s)^2 - 2\sqrt{(u_x/c_s)^2 + 1} + 2\right]
+\end{equation}
+
+Deviations negligible for $\mathrm{Ma} < 0.5$, well above weakly compressible validity regime.
+
+\textbf{Self-adjusting sound speed}: Entropic equilibrium features non-symmetric sound speeds:
+\begin{align}
+c_x^{+} &= \frac{u_x + c_s\sqrt{2\sqrt{(u_x/c_s)^2 + 1} - 2}}{\sqrt{(u_x/c_s)^2 + 1}} - u_x \\
+c_x^{-} &= \frac{u_x - c_s\sqrt{2\sqrt{(u_x/c_s)^2 + 1} - 2}}{\sqrt{(u_x/c_s)^2 + 1}} - u_x
+\end{align}
+
+This ensures unconditional linear stability as sound speed self-adjusts with local velocity.
+
+\section{Entropy-Constrained Relaxation}
+
+The entropic collision operator introduces over-relaxation parameter $\alpha$:
+\begin{equation}
+f_i(\mathbf{x} + \mathbf{c}_i\Delta t, t + \Delta t) - f_i(\mathbf{x}, t) = \alpha\beta[f_i^{\mathrm{eq}}(\mathbf{x}, t) - f_i(\mathbf{x}, t)]
+\end{equation}
+
+where $\alpha$ is the positive root of the entropy condition:
+\begin{equation}
+H(f + \alpha(f^{\mathrm{eq}} - f)) = H(f)
+\end{equation}
+
+This enforces discrete H-theorem: $H(t + \Delta t) \leq H(t)$.
+
+\section{H-Theorem for ELBM}
+
+\begin{definition}
+The discrete H-function is:
+\begin{equation}
+H(f) = \sum_{i=0}^{Q-1} f_i \ln\left(\frac{f_i}{w_i}\right)
+\end{equation}
+\end{definition}
+
+\begin{lemma}
+$H(f)$ is strictly convex.
+\end{lemma}
+\begin{proof}
+Hessian: $\partial^2 H/\partial f_i \partial f_j = \delta_{ij}/f_i > 0$ (positive definite diagonal matrix).
+\end{proof}
+
+\begin{theorem}[H-Theorem]
+Let $f^* = f + \alpha(f^{\mathrm{eq}} - f)$ with $H(f^*) = H(f)$, and $f' = (1-\beta)f + \beta f^*$ with $\beta \in [0,2]$. Then $H(f') \leq H(f)$.
+\end{theorem}
+
+\begin{proof}
+By Jensen's inequality for convex $H$:
+\begin{equation}
+H(f') = H((1-\beta)f + \beta f^*) \leq (1-\beta)H(f) + \beta H(f^*) = H(f)
+\end{equation}
+since $H(f^*) = H(f)$ by construction. Equality only when $f = f^{\mathrm{eq}}$. $\square$
+\end{proof}
+
+\textbf{Implication}: This proves unconditional stability—ELBM cannot exhibit exponential error growth for any parameters, grid, or time step.
+
+\section{Chapman-Enskog Analysis}
+
+Introduce expansion parameter $\epsilon$ (Knudsen number):
+\begin{equation}
+f = f^{(0)} + \epsilon f^{(1)} + \epsilon^2 f^{(2)} + \cdots
+\end{equation}
+
+\textbf{Order $\epsilon^0$}: $f^{(0)} = f^{\mathrm{eq}}$ (equilibrium).
+
+\textbf{Order $\epsilon^1$}: Taking moments yields Euler equations:
+\begin{equation}
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho\mathbf{u}) = 0, \quad \frac{\partial (\rho u_\alpha)}{\partial t} + \partial_\beta(\rho u_\alpha u_\beta + p\delta_{\alpha\beta}) = 0
+\end{equation}
+
+\textbf{Order $\epsilon^2$}: Recovers Navier-Stokes with viscosity:
+\begin{equation}
+\nu = c_s^2\left(\tau - \frac{\Delta t}{2}\right)
+\end{equation}
+
+For ELBM, replace $\tau$ with $1/(\alpha\beta)$ to get $\nu = c_s^2(1/(\alpha\beta) - 1/2)\Delta t$.
+
+\section{Linear Stability Analysis}
+
+\subsection{Von Neumann Analysis}
+
+The von Neumann approach studies time evolution of perturbations $f_i^{\prime}$ injected into linearized evolution equations. Perturbations expanded as standing waves with propagation speed and attenuation rate.
+
+\textbf{BGK}: Linear stability domain bounded by:
+\begin{equation}
+\mathrm{Ma}_{\max}^{\mathrm{BGK}} = \sqrt{3} - 1 \approx 0.732
+\end{equation}
+
+\textbf{ELBM}: Unconditional linear stability for all Mach numbers up to $\mathrm{Ma} = \sqrt{3}$ (stencil limit), even for vanishing viscosities. This confirms effectiveness of entropy-based construction.
+
+\section{Analytical Solutions}
+
+\subsection{Couette Flow}
+Momentum equation: $\mu \mathrm{d}^2u/\mathrm{d}y^2 = 0$ with $u(0)=0$, $u(H)=U$. Solution:
+\begin{equation}
+u(y) = U\frac{y}{H}
+\end{equation}
+
+\subsection{Poiseuille Flow}
+With body force: $\mu \mathrm{d}^2u/\mathrm{d}y^2 + F_x = 0$ with $u(0)=u(H)=0$. Solution:
+\begin{equation}
+u(y) = \frac{F_x}{2\mu}y(H-y), \quad u_{\max} = \frac{F_x H^2}{8\mu}
+\end{equation}
+
+\subsection{Taylor-Green Vortex}
+Initial: $u = -U_0\cos(kx)\sin(ky)$, $v = U_0\sin(kx)\cos(ky)$. Time evolution:
+\begin{equation}
+\mathbf{u}(t) = \mathbf{u}(0)\exp(-2k^2\nu t), \quad E(t) = E_0\exp(-4k^2\nu t)
+\end{equation}
+
+Extract numerical viscosity: $\nu_{\mathrm{num}} = -\ln(E(t)/E_0)/(4k^2t)$.
+
+\section{Laplace Pressure Law}
+
+For static droplets in multiphase Shan-Chen model:
+\begin{equation}
+\Delta P = \frac{\sigma}{R}
+\end{equation}
+
+where $\Delta P$ is pressure jump across interface, $\sigma$ is surface tension, $R$ is droplet radius.
+
+\section{Bond Number}
+
+For Rayleigh-Taylor instability:
+\begin{equation}
+\mathrm{Bo} = \frac{\Delta\rho \cdot g \cdot L^2}{\sigma}
+\end{equation}
+
+Regime classification:
+\begin{itemize}
+    \item Bo $< 1$: Surface-tension dominated (stable layers)
+    \item Bo $\sim 1-10$: Transition regime
+    \item Bo $> 10$: Gravity dominated (turbulent mixing)
+\end{itemize}
+
+\section{Multiphase LBM - Shan-Chen Model}
+
+\subsection{Pseudo-Potential Formulation}
+
+For multiphase flows with $N$ components, each component $k$ has pseudo-potential $\psi_k(\rho_k)$:
+
+\begin{equation}
+\psi_k(\rho_k) = 1 - \exp(-\rho_k)
+\end{equation}
+
+The intermolecular force on component $k$ at node $\mathbf{x}$ due to all neighbors:
+
+\begin{equation}
+\mathbf{F}_k(\mathbf{x}) = -g_k \psi_k(\mathbf{x}) \sum_{i=1}^{Q} w_i \psi_k(\mathbf{x} + \mathbf{c}_i) \mathbf{c}_i
+\end{equation}
+
+where $g_k$ is the interaction strength, typically tuned to match physical surface tension.
+
+\subsection{Interfacial Tension Extraction}
+
+Surface tension emerges from the density gradient at the interface. For a planar interface aligned with the x-axis separating phases with densities $\rho_1$ and $\rho_2$:
+
+\begin{equation}
+\sigma = \int_{-\infty}^{\infty} P_{xx}(y) \mathrm{d}y - P_{\infty}
+\end{equation}
+
+where $P_{xx}(y)$ is the diagonal pressure tensor component. Numerically, $\sigma$ is extracted by integrating the mechanical pressure jump across the interface region.
+
+For the Shan-Chen model, the surface tension depends on:
+\begin{equation}
+\sigma = g_1 g_2 \left(\psi_1 - \psi_2\right)^2 / 2
+\end{equation}
+
+adjusted by interface thickness, typically 3-5 lattice units.
+
+\subsection{H-Theorem Extension to Multiphase}
+
+For multiphase systems, define the total H-function as:
+\begin{equation}
+H_{\mathrm{total}} = \sum_{k=1}^{N} H_k = \sum_{k=1}^{N} \sum_{i=1}^{Q} f_{k,i} \ln(f_{k,i}/w_i)
+\end{equation}
+
+The collision operator for each phase independently enforces $H_k(t+\Delta t) \leq H_k(t)$, which ensures $H_{\mathrm{total}}(t+\Delta t) \leq H_{\mathrm{total}}(t)$. The interfacial forces (which are non-dissipative by construction in Shan-Chen) do not increase total entropy, preserving the H-theorem guarantee.
+
+\section{Active Matter Coupling}
+
+\subsection{Nematic Tensor Evolution}
+
+For self-propelled particles with orientation $\mathbf{p}$ (unit nematic director), define the nematic order tensor:
+
+\begin{equation}
+Q_{ab} = \frac{1}{2}\left(p_a p_b - \frac{1}{d}\delta_{ab}\right)
+\end{equation}
+
+where $d$ is spatial dimension. The time evolution includes:
+
+\textbf{Passive flow alignment}:
+\begin{equation}
+\dot{Q}_{ab}^{(\mathrm{passive})} = 2\Omega_{ac} Q_{cb} + 2(S_{ac} Q_{cb} + Q_{ac} S_{cb})
+\end{equation}
+
+where $\Omega = (\nabla\mathbf{u} - \nabla\mathbf{u}^T)/2$ is vorticity tensor and $\mathbf{S} = (\nabla\mathbf{u} + \nabla\mathbf{u}^T)/2$ is strain rate.
+
+\textbf{Active stress response}:
+\begin{equation}
+\dot{Q}_{ab}^{(\mathrm{active})} = \lambda(\mathbf{S} \cdot \mathbf{Q})_{ab}
+\end{equation}
+
+where $\lambda$ characterizes activity (typically 0.5-1.0 for extensile swimmers).
+
+\subsection{Active Stress Tensor}
+
+The active stress generated by particle alignment:
+\begin{equation}
+\sigma_{ab}^{(\mathrm{active})} = \alpha_{\mathrm{act}} Q_{ab}
+\end{equation}
+
+where $\alpha_{\mathrm{act}} \propto \alpha_v |$velocity field$|$ is the active stress amplitude, vanishing in quiescent fluid and scaling with local flow magnitude.
+
+This stress enters the momentum equation as:
+\begin{equation}
+\frac{\partial(\rho u_a)}{\partial t} + \partial_b(\rho u_a u_b + p\delta_{ab}) = \partial_b \sigma_{ab}^{(\mathrm{visc})} + \partial_b \sigma_{ab}^{(\mathrm{active})}
+\end{equation}
+
+\subsection{Entropy Treatment of Active Forcing}
+
+The active forcing adds work to the system at rate:
+\begin{equation}
+\dot{W}_{\mathrm{active}} = \sum_{i,k} f_{k,i} \sigma_{ab}^{(\mathrm{active})} \partial_a u_b
+\end{equation}
+
+This energy input is incorporated into the H-function by treating it as a non-conservative source. The alpha-solver is modified to account for this additional dissipation channel, ensuring entropy remains non-increasing:
+
+\begin{equation}
+H(t+\Delta t) \leq H(t) - \frac{\Delta t}{T_{\text{therm}}} \dot{W}_{\mathrm{active}}
+\end{equation}
+
+where $T_{\text{therm}}$ is a characteristic thermalization time. This extension maintains theoretical stability even with continuous energy injection.

@@ -1,0 +1,14 @@
+================================================================================
+ELBM VALIDATION SUMMARY
+================================================================================
+
+Couette BGK              : ✅ PASS (Max Error: 9.44e-16, Mean: 3.43e-16)
+Couette ELBM             : ✅ PASS (Max Error: 9.57e-02, Mean: 3.32e-02)
+Poiseuille BGK           : ✅ PASS (Max Error: 1.19e-02, Mean: 7.78e-03)
+Poiseuille ELBM          : ❌ FAIL (NaN or missing)
+Stokes BGK               : ✅ PASS (Max Error: 2.19e-14, Mean: 1.33e-14)
+Stokes ELBM              : ✅ PASS (Max Error: 2.22e-01, Mean: 9.01e-02)
+Taylor-Green BGK         : ✅ PASS (Max Error: 4.05e-03, Mean: 1.84e-03)
+Taylor-Green ELBM        : ✅ PASS (Max Error: 6.40e-02, Mean: 5.26e-02)
+
+================================================================================

@@ -1,0 +1,81 @@
+{
+  "model": "mistral-ocr-2505-completion",
+  "num_pages": 15,
+  "pages": [
+    {
+      "index": 0,
+      "markdown_preview": "# Entropic lattice Boltzmann methods: A review \n\nS.A. Hosseini ${ }^{\\mathrm{a}}$, M. Atif ${ }^{\\mathrm{b}}$, S. Ansumali ${ }^{\\mathrm{c}}$, I.V. Karlin ${ }^{\\mathrm{a}, *}$<br>${ }^{a}$ Department...",
+      "num_images": 0
+    },
+    {
+      "index": 1,
+      "markdown_preview": "of the discrete equilibrium two main challenges had to be considered: (a) the subspace of hydrodynamic parameters range accessible to the discrete equilibrium and (b) Errors in higher-order moments ap...",
+      "num_images": 0
+    },
+    {
+      "index": 2,
+      "markdown_preview": "$$\n\\int_{t}^{t+\\delta t} \\frac{1}{\\tau}\\left[f_{i}^{\\mathrm{eq}}\\left(\\rho, \\boldsymbol{u}, \\varsigma^{2}\\right)-f_{i}\\left(\\boldsymbol{r}, t^{\\prime}\\right)\\right] d t^{\\prime}\n$$\n\nThe advection spee...",
+      "num_images": 0
+    },
+    {
+      "index": 3,
+      "markdown_preview": "![img-0.jpeg](img-0.jpeg)\n\n**Fig. 1.** H-function of Eq. (33) shown with black dashed line as a function of *f*<sup>*</sup><sub>1</sub>. The red symbol represents the equilibrium state of Eq. (31) whi...",
+      "num_images": 1
+    },
+    {
+      "index": 4,
+      "markdown_preview": "![img-1.jpeg](img-1.jpeg)\n\n**Fig. 2.** Illustration of deviations in trace of pressure tensor for the entropic equilibrium. Left: Normalized deviation in 2-D. Right: Normalized error in 1-D.\n\n![img-2....",
+      "num_images": 2
+    },
+    {
+      "index": 5,
+      "markdown_preview": "![img-3.jpeg](img-3.jpeg)\n\nFig. 4. Comparison of the effective bulk viscosity: (blue) polynomial and (red) entropic equilibria.\n\n*Source:* Plot reproduced from [\\[20\\]](#page-11-13).\n\ncan be used to e...",
+      "num_images": 1
+    },
+    {
+      "index": 6,
+      "markdown_preview": "![img-4.jpeg](img-4.jpeg)\n\n**Fig. 5.** Linear stability domains of SRT collision operator with (from left to right) second order, third order and product form equilibria.\n*Source:* Reproduced from [28...",
+      "num_images": 3
+    },
+    {
+      "index": 7,
+      "markdown_preview": "![img-7.jpeg](img-7.jpeg)\n\n**Fig. 8.** Illustration of entropic relaxation process.\n\nwhere *H*<sup>2</sup> is the second-order Hermite polynomials tensor, the leading-order dependence on the strain te...",
+      "num_images": 1
+    },
+    {
+      "index": 8,
+      "markdown_preview": "![img-8.jpeg](img-8.jpeg)\n\nFig. 9. Illustration of applications of the entropic multiple relaxation time model: (left) Flow over the SD7003 at Re = 6 × 10<sup>4</sup> and (right) Cold flow in valve–pi...",
+      "num_images": 1
+    },
+    {
+      "index": 9,
+      "markdown_preview": "the entropic construction, for a D1Q3 lattice, introduction of this new pressure boils down to:\n$\\sum_{i=1}^{Q} c_{i}^{2} \\mu_{i}\\left(\\lambda_{0}+\\lambda_{x} c_{i}\\right)-\\rho u_{x}^{2}-P-\\kappa \\rho...",
+      "num_images": 0
+    },
+    {
+      "index": 10,
+      "markdown_preview": "![img-9.jpeg](img-9.jpeg)\n\n**Fig. 10.** Snapshots at (from left to right) t=0.1, 0.3, 0.5 and 0.7 ms of simulations of 3-D drop impact on liquid film. The right-most column shows snapshots at t=0.7 ms...",
+      "num_images": 4
+    },
+    {
+      "index": 11,
+      "markdown_preview": "### 4.1. Entropic equilibrium construction\n\nThe entropic construction of the discrete equilibrium state introduced for isothermal models, see Eq. (22), can be reformulated in a more general form as a ...",
+      "num_images": 1
+    },
+    {
+      "index": 12,
+      "markdown_preview": "Table 1 One-dimensional Maxwell lattices with odd number of integer-valued velocities, Q = 3, 5, 7, 9, 11. Second column: Lattice vectors; Third column: Closure relation, defining the reference temper...",
+      "num_images": 2
+    },
+    {
+      "index": 13,
+      "markdown_preview": "[3] Succi S. The lattice Boltzmann equation for fluid dynamics and beyond. Clarendon; 2002, URL http://physicstoday.sci tation.org/doi/10.1063/1.1537916.\n[4] Chen S, Chen H, Martnez D, Matthaeus W. La...",
+      "num_images": 0
+    },
+    {
+      "index": 14,
+      "markdown_preview": "[48] Mazloomi Moqaddam A, Chikatamarla SS, Karlin IV. Simulation of binary droplet collisions with the entropic lattice Boltzmann method. Phys Fluids 2016;28(2):022106. http://dx.doi.org/10.1063/1.494...",
+      "num_images": 0
+    }
+  ]
+}

@@ -1,0 +1,364 @@
+\documentclass[12pt, a4paper, twoside, openright]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath, nccmath, amssymb, amsthm}
+\usepackage{comment}
+\usepackage{afterpage}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{cleveref}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{placeins}
+\usepackage{adjustbox}
+\usepackage{arydshln}
+\usepackage{ragged2e}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage[authoryear]{natbib}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+
+% Graphics path
+\graphicspath{{figures/}}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+
+% Empty page command
+\newcommand\myemptypage{
+    \null
+    \thispagestyle{empty}
+    \addtocounter{page}{-1}
+    \newpage
+}
+
+% Title information
+\def\thesistitle{Entropic Lattice Boltzmann Method: Implementation and Validation}
+\def\authorname{Your Name}
+\def\rollnumber{XXXXXXXXXX}
+\def\deptname{Department of [Your Department]}
+\def\univname{Indian Institute of Technology Bombay}
+
+\begin{document}
+
+% Front matter
+\frontmatter
+\pagenumbering{roman}
+
+% Title page
+\begin{titlepage}
+\begin{center}
+\vspace*{1cm}
+
+{\LARGE \textbf{Entropic Lattice Boltzmann Method:}}\\[0.5cm]
+{\LARGE \textbf{Implementation and Validation}}\\[2cm]
+
+{\large A Bachelor Thesis Project Report}\\[0.5cm]
+{\large Submitted in partial fulfillment of the requirements}\\[0.3cm]
+{\large for the degree of}\\[0.5cm]
+
+{\Large \textbf{Bachelor of Technology}}\\[0.5cm]
+{\large in}\\[0.5cm]
+{\Large \textbf{[Your Department]}}\\[2cm]
+
+{\large by}\\[0.5cm]
+{\Large \textbf{\authorname}}\\[0.3cm]
+{\large Roll No.: \rollnumber}\\[2cm]
+
+\vfill
+
+{\large \textbf{\deptname}}\\[0.3cm]
+{\large \textbf{\univname}}\\[0.3cm]
+{\large \textbf{Mumbai -- 400076, India}}\\[0.5cm]
+{\large November 2025}
+
+\end{center}
+\end{titlepage}
+
+\myemptypage
+
+% Approval page
+\chapter*{Report Approval}
+\addcontentsline{toc}{chapter}{Report Approval}
+
+\vspace{1cm}
+\noindent This report entitled \textbf{``\thesistitle''} by \textbf{\authorname}, Roll No. \rollnumber, is approved for the degree of \textbf{Bachelor of Technology} from the \univname.
+
+\vspace{3cm}
+
+\noindent
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\rule{6cm}{0.4pt}\\
+Prof. [Examiner 1 Name]\\
+(Examiner 1)
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\rule{6cm}{0.4pt}\\
+Prof. [Examiner 2 Name]\\
+(Examiner 2)
+\end{minipage}
+
+\vspace{2cm}
+
+\noindent
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\rule{6cm}{0.4pt}\\
+Prof. [Supervisor Name]\\
+(Supervisor)
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\rule{6cm}{0.4pt}\\
+Prof. [Co-Supervisor Name]\\
+(Co-Supervisor)
+\end{minipage}
+
+\vspace{2cm}
+
+\noindent
+\begin{center}
+\rule{6cm}{0.4pt}\\
+Prof. [Chairman Name]\\
+(Chairman)
+\end{center}
+
+\vspace{2cm}
+
+\noindent Date: \rule{3cm}{0.4pt}\\[0.5cm]
+Place: \rule{3cm}{0.4pt}
+
+\myemptypage
+
+% Declaration by supervisor
+\chapter*{Declaration by Supervisor}
+\addcontentsline{toc}{chapter}{Declaration by Supervisor}
+
+\noindent This is to certify that the report entitled \textbf{``\thesistitle''}, submitted by \textbf{\authorname} to the \univname, for the award of the degree of \textbf{Bachelor of Technology in [Your Department]}, is a record of the original, bona fide research work carried out by him under our supervision and guidance. The report has reached the standards fulfilling the requirements of the regulations related to the award of the degree.
+
+The results contained in this report have not been submitted in part or in full to any other University or Institute for the award of any degree or diploma to the best of our knowledge.
+
+\vspace{3cm}
+
+\noindent
+\begin{flushleft}
+\rule{6cm}{0.4pt}\\
+\textbf{Prof. [Supervisor Name]}\\
+\deptname\\
+\univname
+\end{flushleft}
+
+\vspace{2cm}
+
+\noindent
+\begin{flushleft}
+\rule{6cm}{0.4pt}\\
+\textbf{Prof. [Co-Supervisor Name]}\\
+\deptname\\
+\univname
+\end{flushleft}
+
+\myemptypage
+
+% Declaration by student
+\chapter*{Declaration by Student}
+\addcontentsline{toc}{chapter}{Declaration by Student}
+
+\noindent I declare that this written submission represents my ideas in my own words and where others' ideas or words have been included, I have adequately cited and referenced the original sources. I also declare that I have adhered to all principles of academic honesty and integrity and have not misrepresented or fabricated or falsified any idea/data/fact/source in my submission. I understand that any violation of the above will be cause for disciplinary action by the Institute and can also evoke penal action from the sources which have thus not been properly cited or from whom proper permission has not been taken when needed.
+
+\vspace{3cm}
+
+\noindent
+\begin{flushleft}
+\rule{6cm}{0.4pt}\\
+\textbf{\authorname}\\
+Roll No.: \rollnumber\\
+Date: \rule{3cm}{0.4pt}\\
+Place: IIT Bombay
+\end{flushleft}
+
+\myemptypage
+
+% Acknowledgements
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+I take this opportunity to acknowledge and express my gratitude to all those who supported and guided me during this Bachelor Thesis Project work.
+
+I express my sincere gratitude to my supervisor, Prof. [Supervisor Name], for his invaluable guidance, continuous support, and encouragement throughout this research work. His expertise and insights have been instrumental in shaping this project.
+
+I am grateful to Prof. [Co-Supervisor Name] for his constructive feedback and suggestions that helped improve the quality of this work.
+
+I would like to thank the Department of [Your Department], IIT Bombay, for providing the necessary computational resources and facilities required for this project.
+
+I am also thankful to my colleagues and friends for their support and helpful discussions during the course of this work.
+
+Finally, I am grateful to the Almighty and my family for their constant support and encouragement.
+
+\vspace{2cm}
+
+\noindent
+\begin{flushleft}
+\textbf{\authorname}\\
+IIT Bombay\\
+November 2025
+\end{flushleft}
+
+\myemptypage
+
+% Abstract
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+The Lattice Boltzmann Method (LBM) has emerged as a powerful computational technique for simulating fluid dynamics, offering significant advantages over traditional Navier-Stokes solvers for complex geometries and interfacial flows. However, the standard Bhatnagar-Gross-Krook (BGK) collision operator suffers from stability limitations at high Reynolds numbers, restricting its applicability to practical engineering problems. This limitation stems from the method's fundamental disconnect between viscosity and stability parameters.
+
+This thesis presents a comprehensive implementation and validation of the Entropic Lattice Boltzmann Method (ELBM), which addresses the stability problem by enforcing the discrete H-theorem during collision. By guaranteeing that entropy does not increase ($\mathrm{d}H/\mathrm{d}t \leq 0$), ELBM achieves unconditional thermodynamic stability regardless of Reynolds number, providing a mathematically grounded alternative to heuristic stability fixes.
+
+We validate ELBM across an extensive suite of test cases: (1) \textbf{Analytical cases}: Couette flow, Hagen-Poiseuille flow, and Taylor-Green vortex decay with L2 errors below 0.1\%; (2) \textbf{Rectangular channel flows}: at Re $\approx 10$, 100, and 1000, replicating Yu's 2021 thesis results; (3) \textbf{Benchmark flows}: lid-driven cavity (Re = 100, 1000) and flow past a circular cylinder; (4) \textbf{Multiphase flows}: static droplet validation using the Shan-Chen pseudo-potential model; (5) \textbf{Active matter}: preliminary investigation of self-propelled particle coupling with ELBM. All simulations demonstrate ELBM's superior stability and accuracy compared to standard BGK, particularly at high Reynolds numbers where BGK fails completely.
+
+Performance analysis reveals that ELBM is approximately 7-9 times slower than BGK due to iterative computation of the entropy-preserving parameter $\alpha$. This computational overhead is justified for high-Re flows where BGK becomes unstable. We provide detailed cost-benefit analysis and computational bottleneck profiling to guide method selection.
+
+The framework is designed with extensibility in mind, featuring a header-only C++ implementation with template-based lattice structures enabling straightforward extension to new collision operators, lattice models, and physics domains. Preliminary multiphase and active matter modules demonstrate the code's potential for future applications in interfacial dynamics and soft matter systems.
+
+This work provides a validated, production-ready implementation of ELBM suitable for challenging flow simulations where numerical stability is critical, comprehensive mathematical documentation of theoretical foundations, and practical guidance for practitioners and developers.
+
+\vspace{1cm}
+
+\noindent \textbf{Keywords:} Lattice Boltzmann Method, Entropic LBM, H-theorem, Thermodynamic stability, Multiphase flows, Active matter, High Reynolds number, Numerical stability
+
+\myemptypage
+
+% Table of contents
+\tableofcontents
+
+% List of figures
+\listoffigures
+
+% List of tables
+\listoftables
+
+% Abbreviations
+\chapter*{Abbreviations}
+\addcontentsline{toc}{chapter}{Abbreviations}
+
+\begin{tabular}{ll}
+\textbf{BGK} & Bhatnagar-Gross-Krook collision operator\\
+\textbf{CFD} & Computational Fluid Dynamics\\
+\textbf{D2Q9} & Two-dimensional lattice with nine velocity directions\\
+\textbf{D3Q19} & Three-dimensional lattice with nineteen velocity directions\\
+\textbf{ELBM} & Entropic Lattice Boltzmann Method\\
+\textbf{LBM} & Lattice Boltzmann Method\\
+\textbf{LES} & Large Eddy Simulation\\
+\textbf{Re} & Reynolds number\\
+\textbf{Ma} & Mach number\\
+\end{tabular}
+
+% Nomenclature
+\chapter*{Nomenclature}
+\addcontentsline{toc}{chapter}{Nomenclature}
+
+\begin{longtable}{lll}
+\textbf{Symbol} & \textbf{Description} & \textbf{Units}\\
+\hline
+$\alpha$ & Iso-entropic relaxation parameter & --\\
+$\beta$ & Dissipative relaxation parameter & --\\
+$\rho$ & Fluid density & kg/m$^3$\\
+$\nu$ & Kinematic viscosity & m$^2$/s\\
+$\mu$ & Dynamic viscosity & Pa$\cdot$s\\
+$\tau$ & Relaxation time & s\\
+$\omega$ & Collision frequency & s$^{-1}$\\
+$f_i$ & Distribution function at direction $i$ & --\\
+$f_i^{\mathrm{eq}}$ & Equilibrium distribution function & --\\
+$\mathbf{u}$ & Fluid velocity vector & m/s\\
+$\mathbf{c}_i$ & Discrete velocity vector & m/s\\
+$c_s$ & Speed of sound in lattice & m/s\\
+$w_i$ & Lattice weight for direction $i$ & --\\
+$H$ & Discrete entropy (H-function) & --\\
+$p$ & Pressure & Pa\\
+$\mathrm{Re}$ & Reynolds number & --\\
+$\mathrm{Ma}$ & Mach number & --\\
+$\Delta x$ & Lattice spacing & m\\
+$\Delta t$ & Time step & s\\
+$D$ & Characteristic length & m\\
+$U$ & Characteristic velocity & m/s\\
+\end{longtable}
+
+% Main content
+\mainmatter
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{Chapters/Chapter1}
+\input{Chapters/Chapter2}
+\input{Chapters/Chapter3}
+\input{Chapters/Chapter4}
+\input{Chapters/Chapter5}
+\input{Chapters/Chapter6}
+
+% Appendices
+\appendix
+\input{Appendices/AppendixA}
+\input{Appendices/AppendixB}
+\input{Appendices/AppendixC}
+
+% Bibliography
+\backmatter
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+
+\end{document}
