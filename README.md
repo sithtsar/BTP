@@ -219,25 +219,25 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph Input[Input Layer]
-        TestCases[Test Cases: Analytical, Benchmark]
+    subgraph Input["Input Layer"]
+        TestCases["Test Cases"]
     end
 
-    subgraph Processing[Processing Layer]
-        Core[Core LBM: Lattice, Fluid State]
-        Solvers[Solvers: BGK, ELBM]
-        Boundary[Boundary Conditions: Zou-He, Bounce-back]
+    subgraph Processing["Processing Layer"]
+        Core["Core LBM"]
+        Solvers["Solvers: BGK, ELBM"]
+        Boundary["Boundary Conditions"]
     end
 
-    subgraph Extensions[Extension Layer]
-        Multiphase[Multiphase: Color Gradient]
-        Active[Active Matter: Particles, Nematic]
+    subgraph Extensions["Extension Layer"]
+        Multiphase["Multiphase"]
+        Active["Active Matter"]
     end
 
-    subgraph Output[Output Layer]
-        DataFiles[Data Files: .dat, .csv]
-        Plotting[Plotting Scripts: matplotlib, Python]
-        Notebooks[Interactive Notebooks: Marimo]
+    subgraph Output["Output Layer"]
+        DataFiles["Data Files"]
+        Plotting["Plotting Scripts"]
+        Notebooks["Marimo Notebooks"]
     end
 
     TestCases --> Core
